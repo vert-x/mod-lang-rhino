@@ -29,7 +29,7 @@ configurations {
 }
 
 repositories {
-//  mavenLocal()
+  mavenLocal()
   maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   mavenCentral()
 }
@@ -84,6 +84,17 @@ task prepareVertxTest(type: Copy, dependsOn: 'copyMod' ) {
 }
 
 test {
+
+  // Remove any classpath entries for the classes or resources of the rhino verticle and also remove the
+  // Rhino jar from the classpath
+  // If we don't do this then the system classloader will load them which can cause issues with loading resources
+  // from inside JS verticles
+  classpath = files( classpath.findAll {
+    (!( it.toString() ==~ /.+build\/(classes|resources)\/main$/ )) && !(it.toString().contains("org.mozilla"))
+  } )
+
+  outputs.upToDateWhen { false }
+
   delete 'src/test/mod-test/vertx.lang*'
 
   // Some vert.x properties

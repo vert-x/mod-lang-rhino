@@ -63,7 +63,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
   }
 
   public Verticle createVerticle(String main) throws Exception {
-    Verticle app = new RhinoVerticle(main, mcl);
+    Verticle app = new RhinoVerticle(main);
     return app;
   }
 
@@ -228,16 +228,10 @@ public class RhinoVerticleFactory implements VerticleFactory {
       throw new FileNotFoundException("Cannot find script: " + scriptName);
     }
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-    ClassLoader old = Thread.currentThread().getContextClassLoader();
-    Thread.currentThread().setContextClassLoader(cl);
+    cx.evaluateReader(scope, reader, scriptName, 1, null);
     try {
-      cx.evaluateReader(scope, reader, scriptName, 1, null);
-      try {
-        is.close();
-      } catch (IOException ignore) {
-      }
-    } finally {
-      Thread.currentThread().setContextClassLoader(old);
+      is.close();
+    } catch (IOException ignore) {
     }
   }
 
@@ -252,12 +246,10 @@ public class RhinoVerticleFactory implements VerticleFactory {
 
   private class RhinoVerticle extends Verticle {
 
-    private final ClassLoader cl;
     private final String scriptName;
     private Function stopFunction;
 
-    RhinoVerticle(String scriptName, ClassLoader cl) {
-      this.cl = cl;
+    RhinoVerticle(String scriptName) {
       this.scriptName = scriptName;
     }
 
@@ -269,8 +261,8 @@ public class RhinoVerticleFactory implements VerticleFactory {
         // This is pretty ugly - we have to set some thread locals so we can get a reference to the scope and
         // classloader in the load() method - this is because Rhino insists load() must be static
         scopeThreadLocal.set(scope);
-        clThreadLocal.set(cl);
-        Require require = installRequire(cl, cx, scope);
+        clThreadLocal.set(mcl);
+        Require require = installRequire(mcl, cx, scope);
         Scriptable script = require.requireMain(cx, scriptName);
         try {
           stopFunction = (Function) script.get("vertxStop", scope);
