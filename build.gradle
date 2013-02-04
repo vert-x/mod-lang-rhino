@@ -76,26 +76,24 @@ task copyMod( type:Copy, dependsOn: 'classes' ) {
 }
 
 // Package into build/libs/mod.zip
-task dist( type: Zip, dependsOn: 'copyMod' ) {
+task dist( type: Zip) {
   group = 'vert.x'
   description = "Assembles a vert.x module"
   destinationDir = project.file('build/libs')
   archiveName = "${modulename}-${version}" + ".zip"
   //archiveName = "mod.zip"
-  from project.file("build/mod")
+  from copyMod, {
+      into copyMod.destinationDir.name
+  }
 }
 
 artifacts {
   archives dist
 }
 
-task prepareVertxTest(type: Copy, dependsOn: ['copyMod', 'deleteCopiedMod'] ) {
-  from 'build/mod'
+task prepareVertxTest(type: Sync, dependsOn: dist) {
+  from zipTree(dist.archivePath)
   into 'src/test/mod-test' // Copy the mod into the mods directory
-}
-
-task deleteCopiedMod(type: Delete) {
-  delete "src/test/mod-test/$modulename-v$version"
 }
 
 test {
@@ -110,8 +108,6 @@ test {
 
   outputs.upToDateWhen { false }
 
-  delete 'src/test/mod-test/vertx.lang*'
-
   // Some vert.x properties
   systemProperty 'vertx.test.timeout', 15
   systemProperty 'vertx.mods', "$projectDir/src/test/mod-test"  // Set vertx.mods to the mod directory
@@ -121,7 +117,7 @@ test {
   testLogging.showStandardStreams = true
 
   // No idea why we need to depend on testClasses...
-  dependsOn << [ 'testClasses', 'copyMod', 'prepareVertxTest' ]
+  dependsOn << prepareVertxTest << testClasses
 }
 
 
