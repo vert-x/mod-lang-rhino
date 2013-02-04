@@ -75,8 +75,8 @@ task dist( type: Zip, dependsOn: 'copyMod' ) {
   group = 'vert.x'
   description = "Assembles a vert.x module"
   destinationDir = project.file('build/libs')
-  // archiveName = "${modulename}-${version}" + ".zip"
-  archiveName = "mod.zip"
+  archiveName = "${modulename}-${version}" + ".zip"
+  //archiveName = "mod.zip"
   from project.file("build/mod")
 }
 

@@ -38,6 +38,12 @@ uploadArchives {
 	group 'build'
 	description = "Does a maven deploy of archives artifacts"
 
+  def someFile = file("build/libs/${modulename}-${version}" + ".zip")
+
+  artifacts {
+    archives someFile
+  }
+
 	repositories {
 		mavenDeployer {
 			configuration = configurations.archives
