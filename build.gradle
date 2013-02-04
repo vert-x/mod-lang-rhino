@@ -97,14 +97,14 @@ task prepareVertxTest(type: Sync, dependsOn: dist) {
 }
 
 test {
-
+  dependsOn prepareVertxTest
+  
   // Remove any classpath entries for the classes or resources of the rhino verticle and also remove the
   // Rhino jar from the classpath
   // If we don't do this then the system classloader will load them which can cause issues with loading resources
   // from inside JS verticles
-  classpath = files( classpath.findAll {
-    (!( it.toString() ==~ /.+build\/(classes|resources)\/main$/ )) && !(it.toString().contains("org.mozilla"))
-  } )
+  classpath -= sourceSets.main.output
+  classpath -= configurations.compile
 
   outputs.upToDateWhen { false }
 
@@ -115,9 +115,6 @@ test {
 
   // Show output
   testLogging.showStandardStreams = true
-
-  // No idea why we need to depend on testClasses...
-  dependsOn << prepareVertxTest << testClasses
 }
 
 
