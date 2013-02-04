@@ -66,7 +66,7 @@ sourceSets {
 
 task copyMod( type:Copy, dependsOn: 'classes' ) {
   into "build/mod/$groupname.$modulename-v$version"
-  from 'build/classes/main'
+  from compileJava
   from 'src/main/conf'
   from 'src/main/api_shim'
   from 'src/main/coffeescript'
