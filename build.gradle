@@ -94,8 +94,7 @@ task prepareVertxTest(type: Copy, dependsOn: ['copyMod', 'deleteCopiedMod'] ) {
   into 'src/test/mod-test' // Copy the mod into the mods directory
 }
 
-task deleteCopiedMod {
-  outputs.upToDateWhen { false }
+task deleteCopiedMod(type: Delete) {
   delete "src/test/mod-test/$modulename-v$version"
 }
 
