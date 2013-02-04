@@ -115,6 +115,8 @@ test {
 
   // Show output
   testLogging.showStandardStreams = true
+
+  testLogging { exceptionFormat "full" }
 }
 
 
