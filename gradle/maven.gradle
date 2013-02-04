@@ -40,6 +40,8 @@ uploadArchives {
 
 	repositories {
 		mavenDeployer {
+      setUniqueVersion(false)
+
 			configuration = configurations.archives
 
 			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
