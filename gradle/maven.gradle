@@ -80,8 +80,6 @@ def configurePom(def pom) {
         }
 
 		scm {
-	        //connection 'scm:https://github.com/vert-x/mod-lang-rhino'
-	        //developerConnection 'scm:git@github.com:purplefox/vert.x.git'
 	        url 'https://github.com/vert-x/mod-lang-rhino'
 		}
 		
