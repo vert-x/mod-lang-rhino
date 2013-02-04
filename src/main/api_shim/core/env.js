@@ -18,7 +18,7 @@ var vertx = vertx || {};
 
 if (!vertx.env) {
   vertx.env = {};
-  var j_map = org.vertx.java.deploy.impl.VertxLocator.container.getEnv();
+  var j_map = org.vertx.java.platform.impl.RhinoVerticleFactory.container.getEnv();
   var j_iter = j_map.entrySet().iterator();
   while (j_iter.hasNext()) {
     var entry = j_iter.next();

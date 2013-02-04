@@ -58,7 +58,7 @@ sourceSets {
 }
 
 task copyMod( type:Copy, dependsOn: 'classes' ) {
-  into "build/mod/$modulename-v$version"
+  into "build/mod/$groupname.$modulename-v$version"
   from 'build/classes/main'
   from 'src/main/conf'
   from 'src/main/api_shim'
@@ -71,9 +71,10 @@ task copyMod( type:Copy, dependsOn: 'classes' ) {
 // Package into build/libs/mod.zip
 task dist( type: Zip, dependsOn: 'copyMod' ) {
   group = 'vert.x'
-  description = "Assembles a vert.x module in 'mod.zip' format"
+  description = "Assembles a vert.x module"
   destinationDir = project.file('build/libs')
-  archiveName = 'mod.zip'
+  // archiveName = "${modulename}-${version}" + ".zip"
+  archiveName = "mod.zip"
   from project.file("build/mod")
 }
 

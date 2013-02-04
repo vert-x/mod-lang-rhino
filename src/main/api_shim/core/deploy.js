@@ -35,15 +35,15 @@ if (!vertx.deployVerticle) {
       if (!doneHandler) doneHandler = null;
       switch (deployType) {
         case VERTICLE: {
-          org.vertx.java.deploy.impl.VertxLocator.container.deployVerticle(name, config, instances, doneHandler);
+          org.vertx.java.platform.impl.RhinoVerticleFactory.container.deployVerticle(name, config, instances, doneHandler);
           break;
         }
         case WORKER: {
-          org.vertx.java.deploy.impl.VertxLocator.container.deployWorkerVerticle(name, config, instances, doneHandler);
+          org.vertx.java.platform.impl.RhinoVerticleFactory.container.deployWorkerVerticle(name, config, instances, doneHandler);
           break;
         }
         case MODULE: {
-          org.vertx.java.deploy.impl.VertxLocator.container.deployModule(name, config, instances, doneHandler);
+          org.vertx.java.platform.impl.RhinoVerticleFactory.container.deployModule(name, config, instances, doneHandler);
           break;
         }
       }
@@ -63,19 +63,19 @@ if (!vertx.deployVerticle) {
 
     vertx.undeployVerticle = function(name, doneHandler) {
       if (!doneHandler) doneHandler = null;
-      org.vertx.java.deploy.impl.VertxLocator.container.undeployVerticle(name, doneHandler);
+      org.vertx.java.platform.impl.RhinoVerticleFactory.container.undeployVerticle(name, doneHandler);
     }
 
     vertx.undeployModule = function(name, doneHandler) {
       if (!doneHandler) doneHandler = null;
-      org.vertx.java.deploy.impl.VertxLocator.container.undeployModule(name, doneHandler);
+      org.vertx.java.platform.impl.RhinoVerticleFactory.container.undeployModule(name, doneHandler);
     }
 
     vertx.exit = function() {
-      org.vertx.java.deploy.impl.VertxLocator.container.exit();
+      org.vertx.java.platform.impl.RhinoVerticleFactory.container.exit();
     }
 
-    var j_conf = org.vertx.java.deploy.impl.VertxLocator.container.getConfig();
+    var j_conf = org.vertx.java.platform.impl.RhinoVerticleFactory.container.getConfig();
     vertx.config =  j_conf == null ? null : JSON.parse(j_conf.encode());
 
   })();

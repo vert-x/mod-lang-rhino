@@ -18,10 +18,10 @@ var vertx = vertx || {};
 
 if (!vertx.createNetServer) {
   vertx.createNetServer = function() {
-    return org.vertx.java.deploy.impl.VertxLocator.vertx.createNetServer();
+    return org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.createNetServer();
   }
 
   vertx.createNetClient = function() {
-    return org.vertx.java.deploy.impl.VertxLocator.vertx.createNetClient();
+    return org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.createNetClient();
   }
 }

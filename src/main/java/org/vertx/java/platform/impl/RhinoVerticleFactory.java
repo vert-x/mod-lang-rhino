@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.vertx.java.deploy.impl.rhino;
+package org.vertx.java.platform.impl;
 
 import org.mozilla.javascript.*;
 import org.mozilla.javascript.commonjs.module.ModuleScript;
@@ -22,13 +22,13 @@ import org.mozilla.javascript.commonjs.module.Require;
 import org.mozilla.javascript.commonjs.module.RequireBuilder;
 import org.mozilla.javascript.commonjs.module.provider.SoftCachingModuleScriptProvider;
 import org.mozilla.javascript.commonjs.module.provider.UrlModuleSourceProvider;
+import org.vertx.java.core.Vertx;
 import org.vertx.java.core.json.DecodeException;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
-import org.vertx.java.deploy.Verticle;
-import org.vertx.java.deploy.impl.ModuleClassLoader;
-import org.vertx.java.deploy.impl.VerticleFactory;
-import org.vertx.java.deploy.impl.VerticleManager;
+import org.vertx.java.platform.Container;
+import org.vertx.java.platform.Verticle;
+import org.vertx.java.platform.VerticleFactory;
 
 import java.io.*;
 import java.net.URI;
@@ -45,21 +45,25 @@ public class RhinoVerticleFactory implements VerticleFactory {
     ContextFactory.initGlobal(new RhinoContextFactory());
   }
 
-  private VerticleManager mgr;
-  private ModuleClassLoader mcl;
+  private ClassLoader cl;
 
   private static ThreadLocal<ScriptableObject> scopeThreadLocal = new ThreadLocal<>();
   private static ThreadLocal<ClassLoader> clThreadLocal = new ThreadLocal<>();
   private static CoffeeScriptCompiler coffeeScriptCompiler = null;
   private ScriptableObject scope;
 
+  public static Vertx vertx;
+  public static Container container;
+
   public RhinoVerticleFactory() {
   }
 
   @Override
-  public void init(VerticleManager mgr, ModuleClassLoader mcl) {
-	  this.mgr = mgr;
-    this.mcl = mcl;
+  public void init(Vertx vertx, Container container, ClassLoader cl) {
+    this.cl = cl;
+    // These statics are used by the Rhino scripts to look up references to vertx and the container
+    RhinoVerticleFactory.vertx = vertx;
+    RhinoVerticleFactory.container = container;
   }
 
   public Verticle createVerticle(String main) throws Exception {
@@ -67,9 +71,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
     return app;
   }
 
-  public void reportException(Throwable t) {
-
-    Logger logger = mgr.getLogger();
+  public void reportException(Logger logger, Throwable t) {
 
     if (t instanceof RhinoException) {
       RhinoException je = (RhinoException)t;
@@ -261,8 +263,8 @@ public class RhinoVerticleFactory implements VerticleFactory {
         // This is pretty ugly - we have to set some thread locals so we can get a reference to the scope and
         // classloader in the load() method - this is because Rhino insists load() must be static
         scopeThreadLocal.set(scope);
-        clThreadLocal.set(mcl);
-        Require require = installRequire(mcl, cx, scope);
+        clThreadLocal.set(cl);
+        Require require = installRequire(cl, cx, scope);
         Scriptable script = require.requireMain(cx, scriptName);
         try {
           stopFunction = (Function) script.get("vertxStop", scope);

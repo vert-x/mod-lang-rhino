@@ -1,7 +1,7 @@
 var TestUtils = function() {
 
   var that = this;
-  var jutils = new org.vertx.java.testframework.TestUtils(org.vertx.java.deploy.impl.VertxLocator.vertx);
+  var jutils = new org.vertx.java.testframework.TestUtils(org.vertx.java.platform.impl.RhinoVerticleFactory.vertx);
 
   that.azzert = function(result, message) {
     if (message) {
