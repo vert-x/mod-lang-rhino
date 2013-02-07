@@ -24,7 +24,7 @@ if (!vertx.fileSystem) {
 
     function wrapHandler(handler) {
       return function(asyncResult) {
-        if (!asyncResult.exception) {
+        if (asyncResult.succeeded()) {
           handler(null, asyncResult.result);
         } else {
           handler(asyncResult.exception, null);
@@ -34,7 +34,7 @@ if (!vertx.fileSystem) {
 
     function wrapPropsHandler(handler) {
       return function(asyncResult) {
-        if (!asyncResult.exception) {
+        if (asyncResult.succeeded()) {
           var jsProps = convertProps(asyncResult.result);
           handler(null, jsProps);
         } else {
@@ -352,7 +352,7 @@ if (!vertx.fileSystem) {
       var createNew = (openFlags & vertx.fileSystem.CREATE_NEW) == vertx.fileSystem.CREATE_NEW;
 
       j_fs.open(path, perms, read, write, createNew, flush, function(asyncResult) {
-        if (!asyncResult.exception) {
+        if (asyncResult.succeeded()) {
           var j_af = asyncResult.result;
           var wrapped = wrapAsyncFile(j_af);
           handler(null, wrapped);
