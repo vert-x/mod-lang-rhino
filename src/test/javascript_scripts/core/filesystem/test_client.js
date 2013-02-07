@@ -139,12 +139,6 @@ function setup(doneHandler) {
   });
 }
 
-function teardown(doneHandler) {
-  fs.delete(fileDir, true, function() {
-    doneHandler();
-  });
-}
-
 tu.registerTests(this);
 
 setup(function() {
@@ -152,9 +146,8 @@ setup(function() {
 })
 
 function vertxStop() {
-  teardown(function() {
-    tu.unregisterAll();
-    tu.appStopped();
-  });
+  fs.deleteSync(fileDir, true);
+  tu.unregisterAll();
+  tu.appStopped();
 }
 
