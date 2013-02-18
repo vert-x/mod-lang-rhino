@@ -78,6 +78,8 @@ if (!vertx.deployVerticle) {
     var j_conf = org.vertx.java.platform.impl.RhinoVerticleFactory.container.getConfig();
     vertx.config =  j_conf == null ? null : JSON.parse(j_conf.encode());
 
+    vertx._jVertx = org.vertx.java.platform.impl.RhinoVerticleFactory.vertx;
+
   })();
 }
 
