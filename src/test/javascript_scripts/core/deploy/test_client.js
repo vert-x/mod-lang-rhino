@@ -44,6 +44,16 @@ function testUndeploy() {
   });
 }
 
+function testDeployWorker() {
+  eb.registerHandler("test-handler", function MyHandler(message) {
+    if ("started" === message) {
+      eb.unregisterHandler("test-handler", MyHandler);
+      tu.testComplete();
+    }
+  });
+  vertx.deployWorkerVerticle("core/deploy/child.js");
+}
+
 tu.registerTests(this);
 tu.appReady();
 

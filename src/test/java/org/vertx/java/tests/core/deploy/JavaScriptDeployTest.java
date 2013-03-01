@@ -41,6 +41,11 @@ public class JavaScriptDeployTest extends TestBase {
   }
 
   @Test
+  public void testDeployWorker() throws Exception {
+    startTest(getMethodName());
+  }
+
+  @Test
   public void testUndeploy() throws Exception {
     startTest(getMethodName());
   }

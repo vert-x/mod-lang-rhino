@@ -23,7 +23,7 @@ if (!vertx.deployVerticle) {
     var WORKER = 1;
     var MODULE = 2;
 
-    function deploy(deployType, name, config, instances, doneHandler) {
+    function deploy(deployType, name, config, instances, multiThreaded, doneHandler) {
       if (!instances) instances = 1;
       if (config) {
         // Convert to Java Json Object
@@ -32,6 +32,7 @@ if (!vertx.deployVerticle) {
       } else {
         config = null;
       }
+      if (!multiThreaded) multiThreaded = false;
       if (!doneHandler) doneHandler = null;
       switch (deployType) {
         case VERTICLE: {
@@ -39,7 +40,7 @@ if (!vertx.deployVerticle) {
           break;
         }
         case WORKER: {
-          org.vertx.java.platform.impl.RhinoVerticleFactory.container.deployWorkerVerticle(name, config, instances, doneHandler);
+          org.vertx.java.platform.impl.RhinoVerticleFactory.container.deployWorkerVerticle(name, config, instances, multiThreaded, doneHandler);
           break;
         }
         case MODULE: {
@@ -50,15 +51,15 @@ if (!vertx.deployVerticle) {
     }
 
     vertx.deployVerticle = function(main, config, instances, doneHandler) {
-      deploy(VERTICLE, main, config, instances, doneHandler);
+      deploy(VERTICLE, main, config, instances, false, doneHandler);
     }
 
-    vertx.deployWorkerVerticle = function(main, config, instances, doneHandler) {
-      deploy(WORKER, main, config, instances, doneHandler);
+    vertx.deployWorkerVerticle = function(main, config, instances, multiThreaded, doneHandler) {
+      deploy(WORKER, main, config, instances, multiThreaded, doneHandler);
     }
 
     vertx.deployModule = function(moduleName, config, instances, doneHandler) {
-      deploy(MODULE, moduleName, config, instances, doneHandler);
+      deploy(MODULE, moduleName, config, instances, false, doneHandler);
     }
 
     vertx.undeployVerticle = function(name, doneHandler) {
