@@ -17,6 +17,8 @@
 apply from: "gradle/maven.gradle"
 
 apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 group = modowner
 archivesBaseName = modname
