@@ -21,7 +21,7 @@ var tu = new TestUtils();
 
 var server = vertx.createHttpServer();
 var client = vertx.createHttpClient();
-client.setPort(8080);
+client.port(8080);
 
 function testEchoBinary() {
   echo(true);

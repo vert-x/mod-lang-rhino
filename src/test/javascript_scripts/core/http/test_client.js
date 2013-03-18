@@ -20,7 +20,7 @@ load('vertx.js')
 var tu = new TestUtils();
 
 var server = vertx.createHttpServer();
-var client = vertx.createHttpClient().setPort(8080);
+var client = vertx.createHttpClient().port(8080);
 var logger = vertx.logger;
 
 // This is just a basic test. Most testing occurs in the Java tests
@@ -174,37 +174,44 @@ function testPATCHSSLChunked() {
 function httpMethod(ssl, method, chunked) {
 
   if (ssl) {
-    server.setSSL(true);
-    server.setKeyStorePath('./src/test/keystores/server-keystore.jks');
-    server.setKeyStorePassword('wibble');
-    server.setTrustStorePath('./src/test/keystores/server-truststore.jks');
-    server.setTrustStorePassword('wibble');
-    server.setClientAuthRequired(true);
+    server.ssl(true);
+    server.keyStorePath('./src/test/keystores/server-keystore.jks');
+    server.keyStorePassword('wibble');
+    server.trustStorePath('./src/test/keystores/server-truststore.jks');
+    server.trustStorePassword('wibble');
+    server.clientAuthRequired(true);
   }
 
   var path = "/someurl/blah.html";
   var query = "param1=vparam1&param2=vparam2";
   var uri = (ssl ? "https" : "http") +"://localhost:8080" + path + "?" + query;
 
+  var statusCode = 400;
+  var statusMessage = "gerbils";
+
   server.requestHandler(function(req) {
     tu.checkThread()
-    tu.azzert(uri === req.uri);
-    tu.azzert(req.method === method);
-    tu.azzert(req.path === path);
-    tu.azzert(req.query === query);
+    tu.azzert(req.uri() == uri);
+    tu.azzert(req.method() === method);
+    tu.azzert(req.path() === path);
+    tu.azzert(req.query() === query);
 
     tu.azzert(req.headers()['header1'] === 'vheader1');
     tu.azzert(req.headers()['header2'] === 'vheader2');
     tu.azzert(req.params()['param1'] === 'vparam1');
     tu.azzert(req.params()['param2'] === 'vparam2');
-    req.response.headers()['rheader1'] = 'vrheader1'
+    req.response.headers()['rheader1'] = 'vrheader1';
     req.response.putHeader('rheader2', 'vrheader2');
+    if (method !== 'CONNECT') {
+      req.response.statusCode(statusCode);
+    }
+    req.response.statusMessage(statusMessage);
     var body = new vertx.Buffer(0);
     req.dataHandler(function(data) {
       tu.checkThread();
       body.appendBuffer(data);
     });
-    req.response.setChunked(chunked);
+    req.response.chunked(chunked);
     req.endHandler(function() {
       tu.checkThread();
       if (!chunked) {
@@ -223,18 +230,21 @@ function httpMethod(ssl, method, chunked) {
   server.listen(8080);
 
   if (ssl) {
-    client.setSSL(true);
-    client.setKeyStorePath('./src/test/keystores/client-keystore.jks');
-    client.setKeyStorePassword('wibble');
-    client.setTrustStorePath('./src/test/keystores/client-truststore.jks');
-    client.setTrustStorePassword('wibble');
+    client.ssl(true);
+    client.keyStorePath('./src/test/keystores/client-keystore.jks');
+    client.keyStorePassword('wibble');
+    client.trustStorePath('./src/test/keystores/client-truststore.jks');
+    client.trustStorePassword('wibble');
   }
 
   var sent_buff = tu.generateRandomBuffer(1000);
 
   var request = client.request(method, uri, function(resp) {
     tu.checkThread();
-    tu.azzert(200 === resp.statusCode);
+    if (method !== 'CONNECT') {
+      tu.azzert(statusCode === resp.statusCode());
+    }
+    tu.azzert(statusMessage == resp.statusMessage());
     tu.azzert('vrheader1' === resp.headers()['rheader1']);
     tu.azzert('vrheader2' === resp.headers()['rheader2']);
     var body = new vertx.Buffer(0);
@@ -256,7 +266,7 @@ function httpMethod(ssl, method, chunked) {
     });
   });
 
-  request.setChunked(chunked);
+  request.chunked(chunked);
   request.putHeader('header1', 'vheader1');
   request.headers()['header2'] = 'vheader2';
   if (!chunked) {
@@ -264,7 +274,6 @@ function httpMethod(ssl, method, chunked) {
   }
 
   request.writeBuffer(sent_buff);
-
   request.end();
 }
 
