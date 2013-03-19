@@ -193,12 +193,25 @@ if (!vertx.createHttpServer) {
         }
       };
 
-      that.listen = function(port, host) {
+      that.listen = function(port, host, handler) {
         if (host) {
-          j_server.listen(port, host);
+          if (handler) {
+            j_server.listen(port, host, handler);
+          } else {
+            j_server.listen(port, host, null);
+          }
         } else {
-          j_server.listen(port);
+          if (handler) {
+            j_server.listen(port, handler);
+          } else {
+            j_server.listen(port);
+          }
         }
+        return that;
+      }
+
+      that.exceptionHandler = function(handler) {
+        j_server.exceptionHandler(handler);
         return that;
       }
 
