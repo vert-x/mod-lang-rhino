@@ -220,52 +220,52 @@ function httpMethod(ssl, method, chunked) {
       req.response.end();
     });
   });
-  server.listen(8080);
+  server.listen(8080, "0.0.0.0", function(serv) {
+    if (ssl) {
+      client.setSSL(true);
+      client.setKeyStorePath('./src/test/keystores/client-keystore.jks');
+      client.setKeyStorePassword('wibble');
+      client.setTrustStorePath('./src/test/keystores/client-truststore.jks');
+      client.setTrustStorePassword('wibble');
+    }
 
-  if (ssl) {
-    client.setSSL(true);
-    client.setKeyStorePath('./src/test/keystores/client-keystore.jks');
-    client.setKeyStorePassword('wibble');
-    client.setTrustStorePath('./src/test/keystores/client-truststore.jks');
-    client.setTrustStorePassword('wibble');
-  }
+    var sent_buff = tu.generateRandomBuffer(1000);
 
-  var sent_buff = tu.generateRandomBuffer(1000);
-
-  var request = client.request(method, uri, function(resp) {
-    tu.checkThread();
-    tu.azzert(200 === resp.statusCode);
-    tu.azzert('vrheader1' === resp.headers()['rheader1']);
-    tu.azzert('vrheader2' === resp.headers()['rheader2']);
-    var body = new vertx.Buffer(0);
-    resp.dataHandler(function(data) {
+    var request = client.request(method, uri, function(resp) {
       tu.checkThread();
-      body.appendBuffer(data);
-    });
+      tu.azzert(200 === resp.statusCode);
+      tu.azzert('vrheader1' === resp.headers()['rheader1']);
+      tu.azzert('vrheader2' === resp.headers()['rheader2']);
+      var body = new vertx.Buffer(0);
+      resp.dataHandler(function(data) {
+        tu.checkThread();
+        body.appendBuffer(data);
+      });
 
-    resp.endHandler(function() {
-      tu.checkThread();
-      if (method !== 'HEAD' && method !== 'CONNECT') {
-        tu.azzert(tu.buffersEqual(sent_buff, body));
-        if (chunked) {
-          tu.azzert('vtrailer1' === resp.trailers()['trailer1']);
-          tu.azzert('vtrailer2' === resp.trailers()['trailer2']);
+      resp.endHandler(function() {
+        tu.checkThread();
+        if (method !== 'HEAD' && method !== 'CONNECT') {
+          tu.azzert(tu.buffersEqual(sent_buff, body));
+          if (chunked) {
+            tu.azzert('vtrailer1' === resp.trailers()['trailer1']);
+            tu.azzert('vtrailer2' === resp.trailers()['trailer2']);
+          }
         }
-      }
-      tu.testComplete();
+        tu.testComplete();
+      });
     });
+
+    request.setChunked(chunked);
+    request.putHeader('header1', 'vheader1');
+    request.headers()['header2'] = 'vheader2';
+    if (!chunked) {
+      request.putHeader('Content-Length', '' + sent_buff.length())
+    }
+
+    request.writeBuffer(sent_buff);
+
+    request.end();
   });
-
-  request.setChunked(chunked);
-  request.putHeader('header1', 'vheader1');
-  request.headers()['header2'] = 'vheader2';
-  if (!chunked) {
-    request.putHeader('Content-Length', '' + sent_buff.length())
-  }
-
-  request.writeBuffer(sent_buff);
-
-  request.end();
 }
 
 tu.registerTests(this);

@@ -44,38 +44,37 @@ function echo(binary) {
 
   });
 
-  server.listen(8080);
+  server.listen(8080, "0.0.0.0", function(serv) {
+    var buff;
+    var str;
+    if (binary) {
+      buff = tu.generateRandomBuffer(1000);
+    } else {
+      str = tu.randomUnicodeString(1000);
+      buff = new vertx.Buffer(str);
+    }
 
-  var buff;
-  var str;
-  if (binary) {
-    buff = tu.generateRandomBuffer(1000);
-  } else {
-    str = tu.randomUnicodeString(1000);
-    buff = new vertx.Buffer(str);
-  }
-
-  client.connectWebsocket("/someurl", function(ws) {
-    tu.checkThread();
-
-    var received = new vertx.Buffer(0);
-
-    ws.dataHandler(function(buff) {
+    client.connectWebsocket("/someurl", function(ws) {
       tu.checkThread();
-      received.appendBuffer(buff);
-      if (received.length() == buff.length()) {
-        tu.azzert(tu.buffersEqual(buff, received));
-        tu.testComplete();
+
+      var received = new vertx.Buffer(0);
+
+      ws.dataHandler(function(buff) {
+        tu.checkThread();
+        received.appendBuffer(buff);
+        if (received.length() == buff.length()) {
+          tu.azzert(tu.buffersEqual(buff, received));
+          tu.testComplete();
+        }
+      });
+
+      if (binary) {
+        ws.writeBinaryFrame(buff) ;
+      } else {
+        ws.writeTextFrame(str);
       }
     });
-
-    if (binary) {
-      ws.writeBinaryFrame(buff) ;
-    } else {
-      ws.writeTextFrame(str);
-    }
   });
-
 }
 
 function testWriteFromConnectHandler() {
@@ -85,17 +84,16 @@ function testWriteFromConnectHandler() {
     ws.writeTextFrame("foo");
   });
 
-  server.listen(8080);
-
-  client.connectWebsocket("/someurl", function(ws) {
-    tu.checkThread();
-    ws.dataHandler(function(buff) {
+  server.listen(8080, "0.0.0.0", function(serv) {
+    client.connectWebsocket("/someurl", function(ws) {
       tu.checkThread();
-      tu.azzert("foo" == buff.toString());
-      tu.testComplete();
+      ws.dataHandler(function(buff) {
+        tu.checkThread();
+        tu.azzert("foo" == buff.toString());
+        tu.testComplete();
+      });
     });
   });
-
 }
 
 function testClose() {
@@ -107,16 +105,15 @@ function testClose() {
     });
   });
 
-  server.listen(8080);
-
-  client.connectWebsocket("/someurl", function(ws) {
-    tu.checkThread();
-    ws.closedHandler(function() {
-      tu.testComplete();
+  server.listen(8080, "0.0.0.0", function(serv) {
+    client.connectWebsocket("/someurl", function(ws) {
+      tu.checkThread();
+      ws.closedHandler(function() {
+        tu.testComplete();
+      });
+      ws.writeTextFrame("foo");
     });
-    ws.writeTextFrame("foo");
   });
-
 }
 
 function testCloseFromConnectHandler() {
@@ -126,15 +123,14 @@ function testCloseFromConnectHandler() {
     ws.close();
   });
 
-  server.listen(8080);
-
-  client.connectWebsocket("/someurl", function(ws) {
-    tu.checkThread();
-    ws.closedHandler(function() {
-      tu.testComplete();
+  server.listen(8080, "0.0.0.0", function(serv) {
+    client.connectWebsocket("/someurl", function(ws) {
+      tu.checkThread();
+      ws.closedHandler(function() {
+        tu.testComplete();
+      });
     });
   });
-
 }
 
 tu.registerTests(this);
