@@ -31,9 +31,9 @@ var h = function(sock) {
 
 server.connectHandler(h);
 
-server.listen(1234, 'localhost');
-
-tu.appReady();
+server.listen(1234, 'localhost', function(serv) {
+  tu.appReady();
+});
 
 function vertxStop() {
   tu.checkThread();
