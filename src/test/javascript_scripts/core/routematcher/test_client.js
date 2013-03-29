@@ -23,7 +23,6 @@ var tu = new TestUtils();
 var server = vertx.createHttpServer();
 var rm = new vertx.RouteMatcher();
 server.requestHandler(rm);
-server.listen(8080);
 
 var client = vertx.createHttpClient().setPort(8080);
 
@@ -113,10 +112,13 @@ function testAllWithRegEx() {
 }
 
 function testRouteNoMatch() {
-  client.get('some-uri', function(resp) {
-    tu.azzert(404 === resp.statusCode);
-    tu.testComplete();
-  }).end();
+  server.listen(8080, '0.0.0.0', function(serv) {
+    client.get('some-uri', function(resp) {
+      tu.azzert(404 === resp.statusCode);
+      tu.testComplete();
+    }).end();
+  });
+
 }
 
 function route(method, regex, pattern, params, uri) {
@@ -139,10 +141,12 @@ function route(method, regex, pattern, params, uri) {
     method = 'get';
   }
 
-  client[method](uri, function(resp) {
-    tu.azzert(200 == resp.statusCode)
-    tu.testComplete();
-  }).end();
+  server.listen(8080, '0.0.0.0', function(serv) {
+    client[method](uri, function(resp) {
+      tu.azzert(200 == resp.statusCode)
+      tu.testComplete();
+    }).end();
+  });
 }
 
 tu.registerTests(this);
