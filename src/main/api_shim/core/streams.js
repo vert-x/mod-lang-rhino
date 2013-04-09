@@ -26,7 +26,7 @@ if (!vertx.Pump) {
     }
 
     var dataHandler = function(buffer) {
-      ws.writeBuffer(buffer);
+      ws.write(buffer);
       pumped += buffer.length();
       if (ws.writeQueueFull()) {
         rs.pause();

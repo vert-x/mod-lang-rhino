@@ -50,6 +50,7 @@ function testMove() {
       tu.azzert(err === null);
       fs.readFile(to, function(err, res) {
         tu.azzert(err === null);
+        console.log("res is "+ res);
         tu.azzert(res.toString() === content);
         fs.exists(from, function(err, res) {
           tu.azzert(err === null);
@@ -125,8 +126,8 @@ function testPumpFile() {
       tu.azzert(err === null);
       fs.open(to, function(err, file2) {
         tu.azzert(err === null);
-        var rs = file1.getReadStream();
-        var ws = file2.getWriteStream();
+        var rs = file1.readStream();
+        var ws = file2.writeStream();
         var pump = new vertx.Pump(rs, ws);
         pump.start();
         rs.endHandler(function() {

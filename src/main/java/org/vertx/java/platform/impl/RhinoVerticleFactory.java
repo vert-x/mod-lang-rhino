@@ -50,25 +50,17 @@ public class RhinoVerticleFactory implements VerticleFactory {
   private static ThreadLocal<ScriptableObject> scopeThreadLocal = new ThreadLocal<>();
   private static ThreadLocal<ClassLoader> clThreadLocal = new ThreadLocal<>();
   private static CoffeeScriptCompiler coffeeScriptCompiler = null;
-  private ScriptableObject scope;
-
-  public static Vertx vertx;
-  public static Container container;
 
   public RhinoVerticleFactory() {
   }
 
   @Override
-  public void init(Vertx vertx, Container container, ClassLoader cl) {
+  public void init(ClassLoader cl) {
     this.cl = cl;
-    // These statics are used by the Rhino scripts to look up references to vertx and the container
-    RhinoVerticleFactory.vertx = vertx;
-    RhinoVerticleFactory.container = container;
   }
 
-  public Verticle createVerticle(String main) throws Exception {
-    Verticle app = new RhinoVerticle(main);
-    return app;
+  public Verticle createVerticle(String main, Vertx vertx, Container container) throws Exception {
+    return new RhinoVerticle(main, vertx, container);
   }
 
   public void reportException(Logger logger, Throwable t) {
@@ -94,7 +86,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
     loadScript(cl, cx, scope, moduleName);
   }
 
-  private static void addStandardObjectsToScope(ScriptableObject scope) {
+  private void addStandardObjectsToScope(ScriptableObject scope) {
     Object jsStdout = Context.javaToJS(System.out, scope);
     ScriptableObject.putProperty(scope, "stdout", jsStdout);
     Object jsStderr = Context.javaToJS(System.err, scope);
@@ -237,29 +229,31 @@ public class RhinoVerticleFactory implements VerticleFactory {
     }
   }
 
-  private synchronized ScriptableObject getScope(Context cx) {
-    if (scope == null) {
-      scope = cx.initStandardObjects();
-      addStandardObjectsToScope(scope);
-      scope.defineFunctionProperties(new String[]{"load"}, RhinoVerticleFactory.class, ScriptableObject.DONTENUM);
-    }
-    return scope;
-  }
-
   private class RhinoVerticle extends Verticle {
 
     private final String scriptName;
+    private final Vertx vertx;
+    private final Container container;
     private Function stopFunction;
+    private ScriptableObject scope;
 
-    RhinoVerticle(String scriptName) {
+    RhinoVerticle(String scriptName, Vertx vertx, Container container) {
       this.scriptName = scriptName;
+      this.vertx = vertx;
+      this.container = container;
     }
 
-    public void start() throws Exception {
+    public void start() {
       Context cx = Context.enter();
       cx.setOptimizationLevel(2);
       try {
-        scope = getScope(cx);
+        scope = cx.initStandardObjects();
+        addStandardObjectsToScope(scope);
+        scope.defineFunctionProperties(new String[]{"load"}, RhinoVerticleFactory.class, ScriptableObject.DONTENUM);
+        Object jsVertx = Context.javaToJS(vertx, scope);
+        ScriptableObject.putProperty(scope, "__jvertx", jsVertx);
+        Object jsContainer = Context.javaToJS(container, scope);
+        ScriptableObject.putProperty(scope, "__jcontainer", jsContainer);
         // This is pretty ugly - we have to set some thread locals so we can get a reference to the scope and
         // classloader in the load() method - this is because Rhino insists load() must be static
         scopeThreadLocal.set(scope);
@@ -277,7 +271,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
       }
     }
 
-    public void stop() throws Exception {
+    public void stop() {
       if (stopFunction != null) {
         Context cx = Context.enter();
         try {

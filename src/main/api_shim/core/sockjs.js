@@ -20,11 +20,11 @@ if (!vertx.createSockJSServer) {
 
   vertx.createSockJSServer = function(httpServer) {
 
-    if (typeof httpServer._to_java_server != 'function') {
+    if (typeof httpServer._to_java_server !== 'function') {
       throw "Please construct a vertx.SockJSServer with an instance of vert.HttpServer"
     }
 
-    var vertx = org.vertx.java.platform.impl.RhinoVerticleFactory.vertx;
+    var vertx = __jvertx;
 
     var jserver = vertx.createSockJSServer(httpServer._to_java_server());
 

@@ -21,18 +21,43 @@ var tu = new TestUtils();
 
 var client;
 
-function test1() {
+function testConnect() {
+
+  var server = vertx.createNetServer();
+
+  server.connectHandler(function(sock) {
+    tu.checkThread();
+    sock.dataHandler(function(data) {
+      tu.checkThread();
+      sock.write(data);
+    })
+  });
+
+  server.listen(1234, 'localhost');
 
   client = vertx.createNetClient();
 
-  client.connect(1234, 'localhost', function(sock) {
+  client.connect(1234, 'localhost', function(err, sock) {
+
+    tu.azzert(err === null);
+    tu.azzert(sock != null);
 
     sock.dataHandler(function(data) {
       tu.testComplete();
     });
 
     sock.write(new vertx.Buffer('this is a buffer'));
+  });
+}
 
+function testNoConnect() {
+
+  client = vertx.createNetClient();
+
+  client.connect(1234, 'not-exists', function(err, sock) {
+
+    tu.azzert(err != null);
+    tu.testComplete();
   });
 }
 

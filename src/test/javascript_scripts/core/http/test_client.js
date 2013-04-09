@@ -218,7 +218,7 @@ function httpMethod(ssl, method, chunked) {
         req.response.headers()['Content-Length'] =  '' + body.length();
       }
       if (method !== 'HEAD' && method !== 'CONNECT') {
-        req.response.writeBuffer(body);
+        req.response.write(body);
         if (chunked) {
           req.response.trailers()['trailer1'] = 'vtrailer1';
           req.response.putTrailer('trailer2', 'vtrailer2');
@@ -273,7 +273,7 @@ function httpMethod(ssl, method, chunked) {
     request.putHeader('Content-Length', '' + sent_buff.length())
   }
 
-  request.writeBuffer(sent_buff);
+  request.write(sent_buff);
   request.end();
 }
 

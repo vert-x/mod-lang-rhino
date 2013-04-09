@@ -39,7 +39,7 @@ function echo(binary) {
 
     ws.dataHandler(function(buff) {
       tu.checkThread();
-      ws.writeBuffer(buff);
+      ws.write(buff);
     });
 
   });

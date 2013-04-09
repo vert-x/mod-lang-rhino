@@ -20,14 +20,14 @@ if (!vertx.fileSystem) {
   vertx.fileSystem = {};
 
   (function() {
-    var j_fs = org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.fileSystem();
+    var jfs = __jvertx.fileSystem();
 
     function wrapHandler(handler) {
       return function(asyncResult) {
         if (asyncResult.succeeded()) {
-          handler(null, asyncResult.result);
+          handler(null, asyncResult.result());
         } else {
-          handler(asyncResult.exception, null);
+          handler(asyncResult.cause(), null);
         }
       }
     }
@@ -35,26 +35,25 @@ if (!vertx.fileSystem) {
     function wrapPropsHandler(handler) {
       return function(asyncResult) {
         if (asyncResult.succeeded()) {
-          var jsProps = convertProps(asyncResult.result);
+          var jsProps = convertProps(asyncResult.result());
           handler(null, jsProps);
         } else {
-          handler(asyncResult.exception, null);
+          handler(asyncResult.cause(), null);
         }
       }
     }
 
     function convertProps(j_props) {
-      var jsProps = {
-        creationTime: j_props.creationTime.getTime(),
-        lastAccessTime: j_props.lastAccessTime.getTime(),
-        lastModifiedTime: j_props.lastModifiedTime.getTime(),
-        isDirectory: j_props.isDirectory,
-        isOther: j_props.isOther,
-        isRegularFile: j_props.isRegularFile,
-        isSymbolicLink: j_props.isSymbolicLink,
-        size: j_props.size
+      return {
+        creationTime: j_props.creationTime().getTime(),
+        lastAccessTime: j_props.lastAccessTime().getTime(),
+        lastModifiedTime: j_props.lastModifiedTime().getTime(),
+        isDirectory: j_props.isDirectory(),
+        isOther: j_props.isOther(),
+        isRegularFile: j_props.isRegularFile(),
+        isSymbolicLink: j_props.isSymbolicLink(),
+        size: j_props.size()
       }
-      return jsProps;
     }
 
     vertx.fileSystem.copy = function(from, to, arg2, arg3) {
@@ -67,28 +66,34 @@ if (!vertx.fileSystem) {
         handler = arg2;
         recursive = false;
       }
-      j_fs.copy(from, to, recursive, wrapHandler(handler));
+      jfs.copy(from, to, recursive, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.copySync = function(from, to, recursive) {
       if (!recursive) recursive = false;
-      j_fs.copySync(from, to, recursive);
+      jfs.copySync(from, to, recursive);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.move = function(from, to, handler) {
-      j_fs.move(from, to, wrapHandler(handler));
+      jfs.move(from, to, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.moveSync = function(from, to) {
-      j_fs.moveSync(from, to);
+      jfs.moveSync(from, to);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.truncate = function(path, len, handler) {
-      j_fs.truncate(path, len, wrapHandler(handler));
+      jfs.truncate(path, len, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.truncateSync = function(path, len) {
-      j_fs.truncateSync(path, len);
+      jfs.truncateSync(path, len);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.chmod = function(path, perms, arg2, arg3) {
@@ -101,62 +106,73 @@ if (!vertx.fileSystem) {
         handler = arg2;
         dirPerms = null;
       }
-      j_fs.chmod(path, perms, dirPerms, wrapHandler(handler));
+      jfs.chmod(path, perms, dirPerms, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.chmodSync = function(path, perms, dirPerms) {
       if (!dirPerms) dirPerms = null;
-      j_fs.chmodSync(path, perms, dirPerms);
+      jfs.chmodSync(path, perms, dirPerms);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.props = function(path, handler) {
-      j_fs.props(path, wrapPropsHandler(handler));
+      jfs.props(path, wrapPropsHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.propsSync = function(path) {
-      var j_props = j_fs.propsSync(path);
+      var j_props = jfs.propsSync(path);
       return convertProps(j_props);
     }
 
     vertx.fileSystem.lprops = function(path, handler) {
-      j_fs.lprops(path, wrapPropsHandler(handler));
+      jfs.lprops(path, wrapPropsHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.lpropsSync = function(path) {
-      var j_props = j_fs.lpropsSync(path);
+      var j_props = jfs.lpropsSync(path);
       return convertProps(j_props);
     }
 
     vertx.fileSystem.link = function(link, existing, handler) {
-      j_fs.link(link, existing, wrapHandler(handler));
+      jfs.link(link, existing, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.linkSync = function(link, existing) {
-      j_fs.linkSync(link, existing);
+      jfs.linkSync(link, existing);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.symlink = function(link, existing, handler) {
-      j_fs.symlink(link, existing, wrapHandler(handler));
+      jfs.symlink(link, existing, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.symlinkSync = function(link, existing) {
-      j_fs.symlinkSync(link, existing);
+      jfs.symlinkSync(link, existing);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.unlink = function(link, handler) {
-      j_fs.unlink(link, wrapHandler(handler));
+      jfs.unlink(link, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.unlinkSync = function(link) {
-      j_fs.unlinkSync(link);
+      jfs.unlinkSync(link);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.readSymlink = function(link, handler) {
-      j_fs.readSymlink(link, wrapHandler(handler));
+      jfs.readSymlink(link, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.readSymlinkSync = function(link, handler) {
-      return j_fs.readSymlinkSync(link);
+      return jfs.readSymlinkSync(link);
     }
 
     vertx.fileSystem.delete = function(path, arg1, arg2) {
@@ -169,12 +185,14 @@ if (!vertx.fileSystem) {
         handler = arg1;
         recursive = false;
       }
-      j_fs.delete(path, recursive, wrapHandler(handler));
+      jfs.delete(path, recursive, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.deleteSync = function(path, recursive) {
       if (!recursive) recursive = false;
-      j_fs.deleteSync(path, recursive);
+      jfs.deleteSync(path, recursive);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.mkDir = function(path, arg1, arg2, arg3) {
@@ -205,7 +223,8 @@ if (!vertx.fileSystem) {
         default:
           throw 'Invalid number of arguments';
       }
-      j_fs.mkdir(path, perms, createParents, wrapHandler(handler));
+      jfs.mkdir(path, perms, createParents, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.mkDirSync = function(path, arg1, arg2) {
@@ -227,7 +246,8 @@ if (!vertx.fileSystem) {
         default:
           throw 'Invalid number of arguments';
       }
-      j_fs.mkdirSync(path, perms, createParents);
+      jfs.mkdirSync(path, perms, createParents);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.readDir = function(path, arg1, arg2) {
@@ -240,34 +260,38 @@ if (!vertx.fileSystem) {
         handler = arg1;
         filter = null;
       }
-      j_fs.readDir(path, filter, wrapHandler(handler));
+      jfs.readDir(path, filter, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.readDirSync = function(path, filter) {
       if (!filter) filter = false;
-      return j_fs.readDirSync(path, filter);
+      return jfs.readDirSync(path, filter);
     }
 
     vertx.fileSystem.readFile = function(path, handler) {
-      j_fs.readFile(path, wrapHandler(handler));
+      jfs.readFile(path, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.readFileSync = function(path) {
-      return j_fs.readFileSync(path);
+      return jfs.readFileSync(path);
     }
 
     vertx.fileSystem.writeFile = function(path, data, handler) {
       if (typeof data === 'string') {
         data = new org.vertx.java.core.buffer.Buffer(data);
       }
-      j_fs.writeFile(path, data, wrapHandler(handler));
+      jfs.writeFile(path, data, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.writeFileSync = function(path, data) {
       if (typeof data === 'string') {
         data = new org.vertx.java.core.buffer.Buffer(data);
       }
-      j_fs.writeFileSync(path, data);
+      jfs.writeFileSync(path, data);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.OPEN_READ = 1;
@@ -311,7 +335,7 @@ if (!vertx.fileSystem) {
       var write = (openFlags & vertx.fileSystem.OPEN_WRITE) == vertx.fileSystem.OPEN_WRITE;
       var createNew = (openFlags & vertx.fileSystem.CREATE_NEW) == vertx.fileSystem.CREATE_NEW;
 
-      var asyncFile = j_fs.openSync(path, perms, read, write, createNew, flush);
+      var asyncFile = jfs.openSync(path, perms, read, write, createNew, flush);
 
       return wrapAsyncFile(asyncFile);
     }
@@ -356,75 +380,89 @@ if (!vertx.fileSystem) {
       var write = (openFlags & vertx.fileSystem.OPEN_WRITE) == vertx.fileSystem.OPEN_WRITE;
       var createNew = (openFlags & vertx.fileSystem.CREATE_NEW) == vertx.fileSystem.CREATE_NEW;
 
-      j_fs.open(path, perms, read, write, createNew, flush, function(asyncResult) {
+      jfs.open(path, perms, read, write, createNew, flush, function(asyncResult) {
         if (asyncResult.succeeded()) {
-          var j_af = asyncResult.result;
-          var wrapped = wrapAsyncFile(j_af);
+          var jaf = asyncResult.result();
+          var wrapped = wrapAsyncFile(jaf);
           handler(null, wrapped);
         } else {
-          handler(asyncResult.exception, null);
+          handler(asyncResult.cause(), null);
         }
       });
+      return vertx.fileSystem;
     }
 
-    function wrapAsyncFile(j_af) {
+    load("core/read_stream.js");
+    load("core/write_stream.js");
+
+    function wrapAsyncFile(jaf) {
       return {
         close: function(handler) {
           if (handler) {
-            j_af.close(wrapHandler(handler))
+            jaf.close(wrapHandler(handler))
           } else {
-            j_af.close();
+            jaf.close();
           }
         },
 
         write: function(buffer, position, handler) {
-          j_af.write(buffer, position, wrapHandler(handler));
+          jaf.write(buffer, position, wrapHandler(handler));
         },
 
         read: function(buffer, offset, position, length, handler) {
-          j_af.read(buffer, offset, position, length, wrapHandler(handler));
+          jaf.read(buffer, offset, position, length, wrapHandler(handler));
         },
 
-        getWriteStream: function() {
-          return j_af.getWriteStream();
+        writeStream: function() {
+          var jws = jaf.writeStream();
+          var ws = {};
+          writeStream(ws, jws);
+          return ws;
         },
 
-        getReadStream: function() {
-          return j_af.getReadStream();
+        readStream: function() {
+          var jrs = jaf.readStream();
+          var rs = {};
+          readStream(rs, jrs);
+          return rs;
         },
 
         flush: function(handler) {
           if (handler) {
-            j_af.flush(wrapHandler(handler));
+            jaf.flush(wrapHandler(handler));
           } else {
-            j_af.flush();
+            jaf.flush();
           }
         }
       }
     }
 
     vertx.fileSystem.createFile = function(path, handler) {
-      j_fs.createFile(path, wrapHandler(handler));
+      jfs.createFile(path, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.createFileSync = function(path) {
-      j_fs.createFileSync(path);
+      jfs.createFileSync(path);
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.exists = function(path, handler) {
-      j_fs.exists(path, wrapHandler(handler));
+      jfs.exists(path, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.existsSync = function(path) {
-      return j_fs.existsSync(path);
+      return jfs.existsSync(path);
     }
 
     vertx.fileSystem.fsProps = function(path, handler) {
-      j_fs.fsProps(path, wrapHandler(handler));
+      jfs.fsProps(path, wrapHandler(handler));
+      return vertx.fileSystem;
     }
 
     vertx.fileSystem.fsPropsSync = function(path) {
-      return j_fs.fsPropsSync(path);
+      return jfs.fsPropsSync(path);
     }
 
   })();

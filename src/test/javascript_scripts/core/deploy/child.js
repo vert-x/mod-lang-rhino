@@ -17,10 +17,4 @@
 load('test_utils.js')
 load('vertx.js')
 
-var eb = vertx.eventBus;
-
-eb.send("test-handler", "started");
-
-function vertxStop() {
-  eb.send("test-handler", "stopped");
-}
+console.log("in child.js");
