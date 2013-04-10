@@ -58,7 +58,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
   }
 
   @Override
-  public void init(ClassLoader cl, Vertx vertx, Container container) {
+  public void init(Vertx vertx, Container container, ClassLoader cl) {
     this.cl = cl;
     this.vertx = vertx;
     this.container = container;
