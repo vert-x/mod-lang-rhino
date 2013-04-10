@@ -22,7 +22,6 @@
     load('core/http.js');
     load('core/streams.js');
     load('core/timers.js');
-    load('core/utils.js');
     load('core/sockjs.js');
     load('core/parse_tools.js');
     load('core/shared_data.js');
