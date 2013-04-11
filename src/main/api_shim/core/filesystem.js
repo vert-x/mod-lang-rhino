@@ -396,7 +396,7 @@ if (!vertx.fileSystem) {
     load("core/write_stream.js");
 
     function wrapAsyncFile(jaf) {
-      return {
+      var asf = {
         close: function(handler) {
           if (handler) {
             jaf.close(wrapHandler(handler))
@@ -407,10 +407,12 @@ if (!vertx.fileSystem) {
 
         write: function(buffer, position, handler) {
           jaf.write(buffer, position, wrapHandler(handler));
+          return asf;
         },
 
         read: function(buffer, offset, position, length, handler) {
           jaf.read(buffer, offset, position, length, wrapHandler(handler));
+          return asf;
         },
 
         writeStream: function() {
@@ -434,7 +436,8 @@ if (!vertx.fileSystem) {
             jaf.flush();
           }
         }
-      }
+      };
+      return asf;
     }
 
     vertx.fileSystem.createFile = function(path, handler) {

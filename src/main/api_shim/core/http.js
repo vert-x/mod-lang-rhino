@@ -408,6 +408,14 @@ if (!vertx.createHttpServer) {
           return client;
         }
       };
+      client.verifyHost = function(h) {
+        if (h === undefined) {
+          return jclient.isVerifyHost();
+        } else {
+          jclient.setVerifyHost(h);
+          return client;
+        }
+      };
       client.connectWebsocket = function(uri, handler) {
         jclient.connectWebsocket(uri, wrapWebsocketHandler(false, handler));
       };
