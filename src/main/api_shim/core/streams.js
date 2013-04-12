@@ -34,20 +34,24 @@ if (!vertx.Pump) {
       }
     }
 
-    return {
+    var p = {
       start: function() {
         rs.dataHandler(dataHandler);
+        return p;
       },
       stop: function() {
         ws.drainHandler(null);
         rs.dataHandler(null);
+        return p;
       },
       getBytesPumped: function() {
         return pumped;
       },
       setWriteQueueMaxSize: function(maxSize) {
         ws.setWriteQueueMaxSize(maxSize);
+        return p;
       }
-    }
+    };
+    return p;
   }
 }
