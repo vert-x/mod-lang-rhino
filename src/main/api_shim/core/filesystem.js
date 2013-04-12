@@ -415,20 +415,6 @@ if (!vertx.fileSystem) {
           return asf;
         },
 
-        writeStream: function() {
-          var jws = jaf.writeStream();
-          var ws = {};
-          writeStream(ws, jws);
-          return ws;
-        },
-
-        readStream: function() {
-          var jrs = jaf.readStream();
-          var rs = {};
-          readStream(rs, jrs);
-          return rs;
-        },
-
         flush: function(handler) {
           if (handler) {
             jaf.flush(wrapHandler(handler));
@@ -437,6 +423,8 @@ if (!vertx.fileSystem) {
           }
         }
       };
+      writeStream(asf, jaf);
+      readStream(asf, jaf);
       return asf;
     }
 

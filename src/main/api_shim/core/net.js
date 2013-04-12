@@ -146,8 +146,8 @@ if (!vertx.createNetServer) {
     netSocket.close = function() {
       jNetSocket.close();
     };
-    netSocket.closedHandler = function(handler) {
-      jNetSocket.closedHandler(handler);
+    netSocket.closeHandler = function(handler) {
+      jNetSocket.closeHandler(handler);
       return netSocket;
     };
     return netSocket;

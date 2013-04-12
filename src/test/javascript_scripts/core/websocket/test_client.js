@@ -111,7 +111,7 @@ function testClose() {
 
   client.connectWebsocket("/someurl", function(ws) {
     tu.checkThread();
-    ws.closedHandler(function() {
+    ws.closeHandler(function() {
       tu.testComplete();
     });
     ws.writeTextFrame("foo");
@@ -130,7 +130,7 @@ function testCloseFromConnectHandler() {
 
   client.connectWebsocket("/someurl", function(ws) {
     tu.checkThread();
-    ws.closedHandler(function() {
+    ws.closeHandler(function() {
       tu.testComplete();
     });
   });

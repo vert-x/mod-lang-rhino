@@ -198,8 +198,8 @@ if (!vertx.createHttpServer) {
         ws.writeTextFrame = function(data) {
           jwebsocket.writeTextFrame(data);
         };
-        ws.closedHandler = function(handler) {
-          jwebsocket.closedHandler(handler);
+        ws.closeHandler = function(handler) {
+          jwebsocket.closeHandler(handler);
           return ws;
         };
         ws.close = function() {

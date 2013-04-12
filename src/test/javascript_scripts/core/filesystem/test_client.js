@@ -126,8 +126,8 @@ function testPumpFile() {
       tu.azzert(err === null);
       fs.open(to, function(err, file2) {
         tu.azzert(err === null);
-        var rs = file1.readStream();
-        var ws = file2.writeStream();
+        var rs = file1;
+        var ws = file2;
         var pump = new vertx.Pump(rs, ws);
         pump.start();
         rs.endHandler(function() {
