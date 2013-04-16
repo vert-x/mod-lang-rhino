@@ -17,4 +17,4 @@
 load('test_utils.js')
 load('vertx.js')
 
-console.log("in child.js");
+
