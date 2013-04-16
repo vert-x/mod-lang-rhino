@@ -21,37 +21,80 @@ var tu = new TestUtils();
 
 var eb = vertx.eventBus;
 
-function testDeploy() {
-  eb.registerHandler("test-handler", function MyHandler(message) {
-    if ("started" === message) {
-      eb.unregisterHandler("test-handler", MyHandler);
-      tu.testComplete();
-    }
+function testDeploy1() {
+  vertx.deployVerticle("core/deploy/child.js", function(err, deployID) {
+    tu.checkThread();
+    tu.azzert(err === null);
+    tu.azzert(deployID != null);
+    tu.testComplete();
   });
-  vertx.deployVerticle("core/deploy/child.js");
+}
+
+function testDeploy2() {
+  var conf = {blah: 'foo'};
+  vertx.deployVerticle("core/deploy/child.js", conf, function(err, deployID) {
+    tu.checkThread();
+    tu.azzert(err === null);
+    tu.azzert(deployID != null);
+    tu.testComplete();
+  });
+}
+
+function testDeploy3() {
+  vertx.deployVerticle("core/deploy/child.js", 12, function(err, deployID) {
+    tu.checkThread();
+    tu.azzert(err === null);
+    tu.azzert(deployID != null);
+    tu.testComplete();
+  });
+}
+
+function testDeploy4() {
+  var conf = {blah: 'foo'};
+  vertx.deployVerticle("core/deploy/child.js", conf, 12, function(err, deployID) {
+    tu.checkThread();
+    tu.azzert(err === null);
+    tu.azzert(deployID != null);
+    tu.testComplete();
+  });
+}
+
+function testDeployFail() {
+  vertx.deployVerticle("core/deploy/notexist.js", function(err, deployID) {
+    tu.checkThread();
+    tu.azzert(err != null);
+    tu.azzert(deployID === null);
+    tu.testComplete();
+  });
 }
 
 function testUndeploy() {
-  vertx.deployVerticle("core/deploy/child.js", null, 1, function(id) {
+  vertx.deployVerticle("core/deploy/child.js", function(err, deployID) {
     tu.checkThread();
-    eb.registerHandler("test-handler", function MyHandler(message) {
-      if ("stopped" === message) {
-        eb.unregisterHandler("test-handler", MyHandler);
-        tu.testComplete();
-      }
+    vertx.undeployVerticle(deployID, function(err) {
+      tu.azzert(err === null);
+      tu.testComplete();
     });
-    vertx.undeployVerticle(id);
+  });
+}
+
+function testUndeployFail() {
+  vertx.deployVerticle("core/deploy/child.js", function(err, deployID) {
+    tu.checkThread();
+    vertx.undeployVerticle('not_id', function(err) {
+      tu.azzert(err != null);
+      tu.testComplete();
+    });
   });
 }
 
 function testDeployWorker() {
-  eb.registerHandler("test-handler", function MyHandler(message) {
-    if ("started" === message) {
-      eb.unregisterHandler("test-handler", MyHandler);
-      tu.testComplete();
-    }
+  vertx.deployWorkerVerticle("core/deploy/child.js", function(err, deployID) {
+    tu.checkThread();
+    tu.azzert(err === null);
+    tu.azzert(deployID != null);
+    tu.testComplete();
   });
-  vertx.deployWorkerVerticle("core/deploy/child.js");
 }
 
 tu.registerTests(this);

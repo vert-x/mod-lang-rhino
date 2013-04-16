@@ -191,7 +191,6 @@ function testEchoNull() {
   echo(null);
 }
 
-
 function echo(msg) {
   eb.registerHandler(address, function MyHandler(received, replier) {
     tu.checkThread();

@@ -24,7 +24,7 @@ var server = vertx.createHttpServer();
 var rm = new vertx.RouteMatcher();
 server.requestHandler(rm);
 
-var client = vertx.createHttpClient().setPort(8080);
+var client = vertx.createHttpClient().port(8080);
 
 var params = { "name" : "foo", "version" : "v0.1"};
 var re_params = { "param0" : "foo", "param1" :"v0.1"};
@@ -118,13 +118,11 @@ function testRouteNoMatch() {
       tu.testComplete();
     }).end();
   });
-
 }
 
 function route(method, regex, pattern, params, uri) {
 
   var handler = function(req) {
-    tu.azzert(req.params().length === params.length);
     for (k in req.params()) {
       tu.azzert(params[k] === req.params()[k]);
     }

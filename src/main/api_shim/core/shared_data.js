@@ -19,19 +19,19 @@ var vertx = vertx || {};
 if (!vertx.getMap) {
 
   vertx.getMap = function(name) {
-    return org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.sharedData().getMap(name);
+    return __jvertx.sharedData().getMap(name);
   }
 
   vertx.getSet = function(name) {
-    return org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.sharedData().getSet(name);
+    return __jvertx.sharedData().getSet(name);
   }
 
   vertx.removeMap = function(name) {
-    return org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.sharedData().removeMap(name);
+    return __jvertx.sharedData().removeMap(name);
   }
 
   vertx.removeSet = function(name) {
-    return org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.sharedData().removeSet(name);
+    return __jvertx.sharedData().removeSet(name);
   }
 }
 

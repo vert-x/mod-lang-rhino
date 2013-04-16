@@ -17,11 +17,142 @@
 var vertx = vertx || {};
 
 if (!vertx.createNetServer) {
+
+  load("convert_handler.js");
+  load("core/ssl_support.js");
+  load("core/tcp_support.js");
+
   vertx.createNetServer = function() {
-    return org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.createNetServer();
+    var jserver = __jvertx.createNetServer();
+    var server = {};
+    sslSupport(server, jserver);
+    serverSslSupport(server, jserver);
+    tcpSupport(server, jserver);
+    serverTcpSupport(server, jserver);
+
+    server.connectHandler = function(handler) {
+      jserver.connectHandler(function(result) {
+        handler(jsNetSocket(result));
+      });
+    };
+    server.listen = function(port, host, handler) {
+      if (host === undefined) {
+        host = 'localhost';
+      }
+      if (!handler) {
+        handler = null;
+      }
+      jserver.listen(port, host);
+    };
+    server.close = function(handler) {
+      if (handler === undefined) {
+        jserver.close();
+      } else {
+        jserver.close(adaptAsyncResultHandler(handler));
+      }
+    };
+    server.port = function() {
+      return jserver.port();
+    }
+    server.host = function() {
+      return jserver.host();
+    }
+    return server;
   }
 
   vertx.createNetClient = function() {
-    return org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.createNetClient();
+    var jclient = __jvertx.createNetClient();
+    var client = {};
+    sslSupport(client, jclient);
+    clientSslSupport(client, jclient);
+    tcpSupport(client, jclient);
+    client.connect = function(arg0, arg1, arg2) {
+      var port = arg0;
+      var host;
+      var handler;
+      if (arg2 === undefined) {
+        host = 'localhost';
+        handler = arg1;
+      } else {
+        host = arg1;
+        handler = arg2;
+      }
+      jclient.connect(port, host, adaptAsyncResultHandler(handler, function(result) {
+        return jsNetSocket(result);
+      }));
+    };
+    client.reconnectAttempts = function(attempts) {
+      if (attempts === undefined) {
+        return jclient.getReconnectAttempts();
+      } else {
+        jclient.setReconnectAttempts(attempts);
+        return client;
+      }
+    };
+    client.reconnectInterval = function(interval) {
+      if (interval === undefined) {
+        return jclient.getReconnectInterval();
+      } else {
+        jclient.setReconnectInterval(interval);
+        return client;
+      }
+    };
+    client.connectTimeout = function(timeout) {
+      if (timeout === undefined) {
+        return jclient.getConnectTimeout();
+      } else {
+        jclient.setConnectTimeout(timeout);
+        return client;
+      }
+    };
+    client.close = function() {
+      jclient.close();
+    }
+    return client;
+  }
+
+  load("core/read_stream.js");
+  load("core/write_stream.js");
+
+  function jsNetSocket(jNetSocket) {
+    var netSocket = {};
+    readStream(netSocket, jNetSocket);
+    writeStream(netSocket, jNetSocket);
+    netSocket.writeHandlerID = function() {
+      return jNetSocket.writeHandlerID();
+    };
+    netSocket.write = function(arg0, arg1, arg2) {
+      if (arg2 === undefined) {
+        if (arg1 === undefined) {
+          jNetSocket.write(arg0);
+        } else {
+          if (typeof(arg1) === 'function') {
+            arg1 = adaptAsyncResultHandler(arg1);
+          }
+          jNetSocket.write(arg0, arg1);
+        }
+      } else {
+        if (typeof(arg2) === 'function') {
+          arg2 = adaptAsyncResultHandler(arg2);
+        }
+        jNetSocket.write(arg0, arg1, arg2);
+      }
+      return netSocket;
+    };
+    netSocket.sendFile = function(filename) {
+      jNetSocket.sendFile(filename);
+      return netSocket;
+    };
+    netSocket.remoteAddress = function() {
+      return jNetSocket.remoteAddress();
+    };
+    netSocket.close = function() {
+      jNetSocket.close();
+    };
+    netSocket.closeHandler = function(handler) {
+      jNetSocket.closeHandler(handler);
+      return netSocket;
+    };
+    return netSocket;
   }
 }

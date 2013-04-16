@@ -36,7 +36,27 @@ public class JavaScriptDeployTest extends TestBase {
   }
 
   @Test
-  public void testDeploy() throws Exception {
+  public void testDeploy1() throws Exception {
+    startTest(getMethodName());
+  }
+
+  @Test
+  public void testDeploy2() throws Exception {
+    startTest(getMethodName());
+  }
+
+  @Test
+  public void testDeploy3() throws Exception {
+    startTest(getMethodName());
+  }
+
+  @Test
+  public void testDeploy4() throws Exception {
+    startTest(getMethodName());
+  }
+
+  @Test
+  public void testDeployFail() throws Exception {
     startTest(getMethodName());
   }
 
@@ -47,6 +67,11 @@ public class JavaScriptDeployTest extends TestBase {
 
   @Test
   public void testUndeploy() throws Exception {
+    startTest(getMethodName());
+  }
+
+  @Test
+  public void testUndeployFail() throws Exception {
     startTest(getMethodName());
   }
 }

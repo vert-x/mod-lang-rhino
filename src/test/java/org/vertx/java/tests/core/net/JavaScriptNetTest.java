@@ -40,8 +40,12 @@ public class JavaScriptNetTest extends TestBase {
   }
 
   @Test
-  public void test1() throws Exception {
-    startApp("core/net/echo_server.js");
+  public void testConnect() throws Exception {
+    startTest(getMethodName());
+  }
+
+  @Test
+  public void testNoConnect() throws Exception {
     startTest(getMethodName());
   }
 

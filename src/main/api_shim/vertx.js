@@ -15,19 +15,16 @@
  */
 
 (function(){
+    load('container.js');
     load('core/buffer.js');
     load('core/event_bus.js');
     load('core/net.js');
     load('core/http.js');
     load('core/streams.js');
     load('core/timers.js');
-    load('core/utils.js');
     load('core/sockjs.js');
     load('core/parse_tools.js');
     load('core/shared_data.js');
     load('core/filesystem.js');
-    load('core/deploy.js');
-    load('core/logger.js');
-    load('core/env.js');
     (this.module && module.exports) ? module.exports = vertx : this.vertx = vertx;
 })();

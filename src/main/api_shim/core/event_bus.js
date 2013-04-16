@@ -22,7 +22,41 @@ if (!vertx.eventBus) {
 
     var handlerMap = {};
 
-    var jEventBus = org.vertx.java.platform.impl.RhinoVerticleFactory.vertx.eventBus();
+    var jEventBus = __jvertx.eventBus();
+
+    that.registerLocalHandler = function(address, handler) {
+      registerHandler(address, handler, true);
+      return that;
+    };
+
+    that.registerHandler = function(address, handler) {
+      registerHandler(address, handler, false);
+      return that;
+    };
+
+    that.unregisterHandler = function(address, handler) {
+      checkHandlerParams(address, handler);
+      var wrapped = handlerMap[handler];
+      if (wrapped) {
+        jEventBus.unregisterHandler(address, wrapped);
+        delete handlerMap[handler];
+      }
+      return that;
+    };
+
+    /*
+     Message should be a JSON object
+     It should have a property "address"
+     */
+    that.send = function(address, message, replyHandler) {
+      sendOrPub(true, address, message, replyHandler);
+      return that;
+    };
+
+    that.publish = function(address, message) {
+      sendOrPub(false, address, message);
+      return that;
+    };
 
     function checkHandlerParams(address, handler) {
       if (!address) {
@@ -45,14 +79,14 @@ if (!vertx.eventBus) {
     function wrappedHandler(handler) {
       return new org.vertx.java.core.Handler({
         handle: function(jMsg) {
-          var body = jMsg.body;
+          var body = jMsg.body();
 
           if (typeof body === 'object') {
             var clazz = body.getClass();
             if (clazz === jsonObjectClass || clazz === jsonArrayClass) {
               // Convert to JS JSON
-              if (jMsg.body) {
-                body = JSON.parse(jMsg.body.encode());
+              if (body) {
+                body = JSON.parse(body.encode());
               } else {
                 body = undefined;
               }
@@ -85,29 +119,11 @@ if (!vertx.eventBus) {
       handlerMap[handler] = wrapped;
 
       if (localOnly) {
-        return jEventBus.registerLocalHandler(address, wrapped);
+        jEventBus.registerLocalHandler(address, wrapped);
       } else {
-        return jEventBus.registerHandler(address, wrapped);
+        jEventBus.registerHandler(address, wrapped);
       }
     }
-
-    that.registerLocalHandler = function(address, handler) {
-      return registerHandler(address, handler, true);
-    };
-
-    that.registerHandler = function(address, handler) {
-      return registerHandler(address, handler, false);
-    };
-
-    that.unregisterHandler = function(address, handler) {
-      checkHandlerParams(address, handler);
-      var wrapped = handlerMap[handler];
-      if (wrapped) {
-        jEventBus.unregisterHandler(address, wrapped);
-        delete handlerMap[handler];
-      }
-    };
-
 
     function convertMessage(message) {
       var msgType = typeof message;
@@ -134,26 +150,14 @@ if (!vertx.eventBus) {
       return message;
     }
 
-    /*
-    Message should be a JSON object
-    It should have a property "address"
-     */
-    that.send = function(address, message, replyHandler) {
-      sendOrPub(true, address, message, replyHandler);
-    };
-
-    that.publish = function(address, message) {
-      sendOrPub(false, address, message);
-    };
-
     function sendOrPub(send, address, message, replyHandler) {
       if (!address) {
         throw "address must be specified";
       }
-      if (typeof address != "string") {
+      if (typeof address !== "string") {
         throw "address must be a string";
       }
-      if (replyHandler && typeof replyHandler != "function") {
+      if (replyHandler && typeof replyHandler !== "function") {
         throw "replyHandler must be a function";
       }
       message = convertMessage(message);
