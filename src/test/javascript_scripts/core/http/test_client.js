@@ -211,7 +211,9 @@ function httpMethod(ssl, method, chunked) {
       tu.checkThread();
       body.appendBuffer(data);
     });
-    req.response.chunked(chunked);
+    if (method !== 'HEAD' && method !== 'CONNECT') {
+      req.response.chunked(chunked);
+    }
     req.endHandler(function() {
       tu.checkThread();
       if (!chunked) {
