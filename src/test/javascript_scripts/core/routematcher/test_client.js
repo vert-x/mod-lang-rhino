@@ -114,7 +114,7 @@ function testAllWithRegEx() {
 function testRouteNoMatch() {
   server.listen(8080, '0.0.0.0', function(serv) {
     client.get('some-uri', function(resp) {
-      tu.azzert(404 === resp.statusCode);
+      tu.azzert(404 === resp.statusCode());
       tu.testComplete();
     }).end();
   });
@@ -141,7 +141,7 @@ function route(method, regex, pattern, params, uri) {
 
   server.listen(8080, '0.0.0.0', function(serv) {
     client[method](uri, function(resp) {
-      tu.azzert(200 == resp.statusCode)
+      tu.azzert(200 == resp.statusCode())
       tu.testComplete();
     }).end();
   });

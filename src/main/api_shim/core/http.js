@@ -250,8 +250,7 @@ if (!vertx.createHttpServer) {
           jserver.close();
         }
       };
-
-      that.listen = function(port, host, handler) {
+      server.listen = function(port, host, handler) {
         if (host) {
           if (handler) {
             jserver.listen(port, host, handler);
@@ -265,8 +264,9 @@ if (!vertx.createHttpServer) {
             jserver.listen(port);
           }
         }
-        return that;
+        return server;
       }
+      return server;
     }
 
     vertx.createHttpClient = function() {

@@ -186,7 +186,7 @@ function httpMethod(ssl, method, chunked) {
   var query = "param1=vparam1&param2=vparam2";
   var uri = (ssl ? "https" : "http") +"://localhost:8080" + path + "?" + query;
 
-  var statusCode = 400;
+  var statusCode = 200;
   var statusMessage = "gerbils";
 
   server.requestHandler(function(req) {
@@ -230,11 +230,11 @@ function httpMethod(ssl, method, chunked) {
 
   server.listen(8080, "0.0.0.0", function(serv) {
     if (ssl) {
-      client.setSSL(true);
-      client.setKeyStorePath('./src/test/keystores/client-keystore.jks');
-      client.setKeyStorePassword('wibble');
-      client.setTrustStorePath('./src/test/keystores/client-truststore.jks');
-      client.setTrustStorePassword('wibble');
+      client.ssl(true);
+      client.keyStorePath('./src/test/keystores/client-keystore.jks');
+      client.keyStorePassword('wibble');
+      client.trustStorePath('./src/test/keystores/client-truststore.jks');
+      client.trustStorePassword('wibble');
     }
 
     var sent_buff = tu.generateRandomBuffer(1000);
@@ -242,7 +242,7 @@ function httpMethod(ssl, method, chunked) {
     var request = client.request(method, uri, function(resp) {
 
       tu.checkThread();
-      tu.azzert(200 === resp.statusCode);
+      tu.azzert(statusCode === resp.statusCode());
       tu.azzert('vrheader1' === resp.headers()['rheader1']);
       tu.azzert('vrheader2' === resp.headers()['rheader2']);
       var body = new vertx.Buffer(0);
@@ -264,14 +264,14 @@ function httpMethod(ssl, method, chunked) {
       });
     });
 
-    request.setChunked(chunked);
+    request.chunked(chunked);
     request.putHeader('header1', 'vheader1');
     request.headers()['header2'] = 'vheader2';
     if (!chunked) {
       request.putHeader('Content-Length', '' + sent_buff.length())
     }
 
-    request.writeBuffer(sent_buff);
+    request.write(sent_buff);
 
     request.end();
   });
