@@ -230,7 +230,8 @@ function httpMethod(ssl, method, chunked) {
     });
   });
 
-  server.listen(8080, "0.0.0.0", function(serv) {
+  server.listen(8080, "0.0.0.0", function(err, serv) {
+    tu.azzert(err === null);
     if (ssl) {
       client.ssl(true);
       client.keyStorePath('./src/test/keystores/client-keystore.jks');

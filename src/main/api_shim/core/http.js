@@ -250,20 +250,18 @@ if (!vertx.createHttpServer) {
           jserver.close();
         }
       };
-      server.listen = function(port, host, handler) {
-        if (host) {
-          if (handler) {
-            jserver.listen(port, host, handler);
-          } else {
-            jserver.listen(port, host, null);
-          }
-        } else {
-          if (handler) {
-            jserver.listen(port, handler);
-          } else {
-            jserver.listen(port);
-          }
+      server.listen = function() {
+        var args = Array.prototype.slice.call(arguments);
+        var handler = getArgValue('function', args);
+        var host = getArgValue('string', args);
+        var port = getArgValue('number', args);
+        if (handler) {
+          handler = adaptAsyncResultHandler(handler);
         }
+        if (host == null) {
+          host = "0.0.0.0";
+        }
+        jserver.listen(port, host, handler);
         return server;
       }
       return server;

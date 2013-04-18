@@ -36,7 +36,7 @@ if (!vertx.createNetServer) {
         handler(jsNetSocket(result));
       });
     };
-    server.listen = function(port, host, handler) {
+    server.listen = function() {
       var args = Array.prototype.slice.call(arguments);
       var handler = getArgValue('function', args);
       var host = getArgValue('string', args);
@@ -44,7 +44,7 @@ if (!vertx.createNetServer) {
       if (handler != null) {
         handler = adaptAsyncResultHandler(handler);
       }
-      if (host != null) {
+      if (host == null) {
         host = "0.0.0.0";
       }
       jserver.listen(port, host, handler);
