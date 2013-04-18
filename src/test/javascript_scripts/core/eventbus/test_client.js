@@ -52,7 +52,7 @@ function assertReply(rep) {
 function testSimple() {
 
   var handled = false;
-  eb.registerHandler(address, function MyHandler(msg, replier) {
+  var ebus = eb.registerHandler(address, function MyHandler(msg, replier) {
     tu.checkThread();
     tu.azzert(!handled);
     assertSent(msg);
@@ -60,35 +60,36 @@ function testSimple() {
     handled = true;
     tu.testComplete();
   });
+  tu.azzert(ebus === eb)
 
-  eb.send(address, sent);
+  tu.azzert(eb.send(address, sent) === eb);
 }
 
 function testEmptyMessage() {
 
   var handled = false;
-  eb.registerHandler(address, function MyHandler(msg, replier) {
+  var ebus = eb.registerHandler(address, function MyHandler(msg, replier) {
     tu.checkThread();
     tu.azzert(!handled);
-    eb.unregisterHandler(address, MyHandler);
+    tu.azzert(eb.unregisterHandler(address, MyHandler) === eb);
     handled = true;
     tu.testComplete();
   });
-
-  eb.send(address, emptySent);
+  tu.azzert(ebus === eb);
+  tu.azzert(eb.send(address, emptySent) === eb);
 }
 
 
 function testUnregister() {
 
   var handled = false;
-  eb.registerHandler(address, function MyHandler(msg, replier) {
+  var ebus = eb.registerHandler(address, function MyHandler(msg, replier) {
     tu.checkThread();
     tu.azzert(!handled);
     assertSent(msg);
-    eb.unregisterHandler(address, MyHandler);
+    tu.azzert(eb.unregisterHandler(address, MyHandler) === eb);
     // Unregister again - should do nothing
-    eb.unregisterHandler(address, MyHandler);
+    tu.azzert(eb.unregisterHandler(address, MyHandler) === eb);
     handled = true;
     // Wait a little while to allow any other messages to arrive
     vertx.setTimer(100, function() {
@@ -97,66 +98,73 @@ function testUnregister() {
   });
 
   for (var i = 0; i < 2; i++) {
-    eb.send(address, sent);
+    tu.azzert(eb.send(address, sent) === eb);
   }
 }
 
 function testWithReply() {
 
   var handled = false;
-  eb.registerHandler(address, function MyHandler(msg, replier) {
+  var ebus = eb.registerHandler(address, function MyHandler(msg, replier) {
     tu.checkThread();
     tu.azzert(!handled);
     assertSent(msg);
-    eb.unregisterHandler(address, MyHandler);
+    tu.azzert(eb.unregisterHandler(address, MyHandler) === eb);
     handled = true;
     replier(reply);
   });
+  tu.azzert(ebus === eb);
 
-  eb.send(address, sent, function(reply) {
+  ebus = eb.send(address, sent, function(reply) {
     tu.checkThread();
     assertReply(reply);
     tu.testComplete();
   });
+  tu.azzert(ebus === eb);
 }
 
 function testReplyOfReplyOfReply() {
 
-  eb.registerHandler(address, function MyHandler(msg, replier) {
+  var ebus = eb.registerHandler(address, function MyHandler(msg, replier) {
     tu.azzert("message" === msg);
     replier("reply", function(reply, replier) {
       tu.azzert("reply-of-reply" === reply);
       replier("reply-of-reply-of-reply");
-      eb.unregisterHandler(address, MyHandler);
+      tu.azzert(eb.unregisterHandler(address, MyHandler) === eb);
     });
   });
+  tu.azzert(ebus === eb);
 
-  eb.send(address, "message", function(reply, replier) {
+  ebus = eb.send(address, "message", function(reply, replier) {
     tu.azzert("reply" === reply);
     replier("reply-of-reply", function(reply) {
       tu.azzert("reply-of-reply-of-reply" === reply);
       tu.testComplete();
     });
   });
+  tu.azzert(ebus === eb);
 }
 
 function testEmptyReply() {
 
   var handled = false;
-  eb.registerHandler(address, function MyHandler(msg, replier) {
+  var ebus = eb.registerHandler(address, function MyHandler(msg, replier) {
     tu.checkThread();
     tu.azzert(!handled);
     assertSent(msg);
-    eb.unregisterHandler(address, MyHandler);
+    tu.azzert(eb.unregisterHandler(address, MyHandler) === eb);
     handled = true;
     replier({});
   });
+  tu.azzert(ebus === eb);
 
-  eb.send(address, sent, function(reply) {
+ ebus = eb.send(address, sent, function(reply) {
     tu.checkThread();
     tu.testComplete();
   });
-  eb.send(address, sent);
+  tu.azzert(ebus === eb);
+
+  tu.azzert(eb.send(address, sent) === eb);
 }
 
 function testEchoString() {
@@ -192,12 +200,13 @@ function testEchoNull() {
 }
 
 function echo(msg) {
-  eb.registerHandler(address, function MyHandler(received, replier) {
+  var ebus = eb.registerHandler(address, function MyHandler(received, replier) {
     tu.checkThread();
-    eb.unregisterHandler(address, MyHandler);
+    tu.azzert(eb.unregisterHandler(address, MyHandler) === eb);
     replier(received);
   });
-  eb.send(address, msg, function (reply){
+  tu.azzert(ebus === eb);
+  ebus = eb.send(address, msg, function (reply){
 
     if (msg != null) {
       if (typeof msg != 'object') {
@@ -214,6 +223,7 @@ function echo(msg) {
 
     tu.testComplete();
   });
+  tu.azzert(ebus === eb);
 }
 
 tu.registerTests(this);

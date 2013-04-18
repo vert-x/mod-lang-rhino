@@ -123,6 +123,7 @@ if (!vertx.eventBus) {
       } else {
         jEventBus.registerHandler(address, wrapped);
       }
+      return vertx.eventBus;
     }
 
     function convertMessage(message) {
@@ -171,6 +172,7 @@ if (!vertx.eventBus) {
       } else {
         jEventBus.publish(address, message);
       }
+      return vertx.eventBus;
     }
 
   })();
