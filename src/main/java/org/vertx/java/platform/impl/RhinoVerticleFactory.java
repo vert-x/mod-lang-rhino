@@ -84,7 +84,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
   public void close() {
   }
 
-  public static void load(String moduleName) throws Exception {
+  public static synchronized void load(String moduleName) throws Exception {
     ScriptableObject scope = scopeThreadLocal.get();
     ClassLoader cl = clThreadLocal.get();
     Context cx = Context.getCurrentContext();
@@ -234,7 +234,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
     }
   }
 
-  private ScriptableObject getScope(Context cx) {
+  private synchronized ScriptableObject getScope(Context cx) {
     if (scope == null) {
       scope = cx.initStandardObjects();
       addStandardObjectsToScope(scope);

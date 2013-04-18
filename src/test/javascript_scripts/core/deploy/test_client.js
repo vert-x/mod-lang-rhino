@@ -53,6 +53,9 @@ function testDeploy4() {
   var conf = {blah: 'foo'};
   vertx.deployVerticle("core/deploy/child.js", conf, 12, function(err, deployID) {
     tu.checkThread();
+    if (err) {
+      err.printStackTrace();
+    }
     tu.azzert(err === null);
     tu.azzert(deployID != null);
     tu.testComplete();
