@@ -33,21 +33,25 @@ function testConnect() {
     })
   });
 
-  server.listen(1234, 'localhost');
-
-  client = vertx.createNetClient();
-
-  client.connect(1234, 'localhost', function(err, sock) {
+  server.listen(1234, 'localhost', function(err, server) {
 
     tu.azzert(err === null);
-    tu.azzert(sock != null);
+    client = vertx.createNetClient();
 
-    sock.dataHandler(function(data) {
-      tu.testComplete();
+    client.connect(1234, 'localhost', function(err, sock) {
+
+      tu.azzert(err === null);
+      tu.azzert(sock != null);
+
+      sock.dataHandler(function(data) {
+        tu.testComplete();
+      });
+
+      sock.write(new vertx.Buffer('this is a buffer'));
     });
-
-    sock.write(new vertx.Buffer('this is a buffer'));
   });
+
+
 }
 
 function testNoConnect() {

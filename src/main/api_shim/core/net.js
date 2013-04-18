@@ -21,6 +21,7 @@ if (!vertx.createNetServer) {
   load("convert_handler.js");
   load("core/ssl_support.js");
   load("core/tcp_support.js");
+  load("args.js");
 
   vertx.createNetServer = function() {
     var jserver = __jvertx.createNetServer();
@@ -36,13 +37,17 @@ if (!vertx.createNetServer) {
       });
     };
     server.listen = function(port, host, handler) {
-      if (host === undefined) {
-        host = 'localhost';
+      var args = Array.prototype.slice.call(arguments);
+      var handler = getArgValue('function', args);
+      var host = getArgValue('string', args);
+      var port = getArgValue('number', args);
+      if (handler != null) {
+        handler = adaptAsyncResultHandler(handler);
       }
-      if (!handler) {
-        handler = null;
+      if (host != null) {
+        host = "0.0.0.0";
       }
-      jserver.listen(port, host);
+      jserver.listen(port, host, handler);
     };
     server.close = function(handler) {
       if (handler === undefined) {

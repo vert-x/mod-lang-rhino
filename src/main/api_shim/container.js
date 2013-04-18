@@ -24,6 +24,7 @@ if (!vertx.deployVerticle) {
     var MODULE = 2;
 
     load("convert_handler.js");
+    load("args.js");
 
     function deploy(deployType, name, args) {
       var doneHandler = getArgValue('function', args);
@@ -60,19 +61,6 @@ if (!vertx.deployVerticle) {
           __jcontainer.deployModule(name, config, instances, doneHandler);
           break;
         }
-      }
-    }
-
-    function getArgValue(type, args) {
-      if (args.length === 0) {
-        return null;
-      }
-      var arg = args[args.length - 1];
-      if (typeof(arg) === type) {
-        args.pop();
-        return arg;
-      } else {
-        return null;
       }
     }
 
