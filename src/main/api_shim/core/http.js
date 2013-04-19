@@ -135,21 +135,11 @@ if (!vertx.createHttpServer) {
           }
           return resp;
         };
-        resp.write = function(arg0, arg1, arg2) {
-          if (arg2 === undefined) {
-            if (arg1 === undefined) {
-              jresp.write(arg0);
-            } else {
-              if (typeof(arg1) === 'function') {
-                arg1 = adaptAsyncResultHandler(arg1);
-              }
-              jresp.write(arg0, arg1);
-            }
+        resp.write = function(arg0, arg1) {
+          if (arg1 === undefined) {
+            jresp.write(arg0);
           } else {
-            if (typeof(arg2) === 'function') {
-              arg2 = adaptAsyncResultHandler(arg2);
-            }
-            jresp.write(arg0, arg1, arg2);
+            jresp.write(arg0, arg1);
           }
           return resp;
         };
@@ -337,15 +327,11 @@ if (!vertx.createHttpServer) {
           }
           return req;
         };
-        req.write = function(arg0, arg1, arg2) {
-          if (arg1) {
-            if (arg2) {
-              jreq.write(arg0, arg1, arg2);
-            } else {
-              jreq.write(arg0, arg1);
-            }
-          } else {
+        req.write = function(arg0, arg1) {
+          if (arg1 === undefined) {
             jreq.write(arg0);
+          } else {
+            jreq.write(arg0, arg1);
           }
           return req;
         };

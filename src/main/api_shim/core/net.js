@@ -126,21 +126,11 @@ if (!vertx.createNetServer) {
     netSocket.writeHandlerID = function() {
       return jNetSocket.writeHandlerID();
     };
-    netSocket.write = function(arg0, arg1, arg2) {
-      if (arg2 === undefined) {
-        if (arg1 === undefined) {
-          jNetSocket.write(arg0);
-        } else {
-          if (typeof(arg1) === 'function') {
-            arg1 = adaptAsyncResultHandler(arg1);
-          }
-          jNetSocket.write(arg0, arg1);
-        }
+    netSocket.write = function(arg0, arg1) {
+      if (arg1 === undefined) {
+        jNetSocket.write(arg0);
       } else {
-        if (typeof(arg2) === 'function') {
-          arg2 = adaptAsyncResultHandler(arg2);
-        }
-        jNetSocket.write(arg0, arg1, arg2);
+        jNetSocket.write(arg0, arg1);
       }
       return netSocket;
     };
