@@ -66,7 +66,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
   }
 
   public Verticle createVerticle(String main) throws Exception {
-    return new RhinoVerticle(main, vertx, container);
+    return new RhinoVerticle(main);
   }
 
   public void reportException(Logger logger, Throwable t) {
@@ -266,15 +266,10 @@ public class RhinoVerticleFactory implements VerticleFactory {
   private class RhinoVerticle extends Verticle {
 
     private final String scriptName;
-    private final Vertx vertx;
-    private final Container container;
     private Function stopFunction;
 
-
-    RhinoVerticle(String scriptName, Vertx vertx, Container container) {
+    RhinoVerticle(String scriptName) {
       this.scriptName = scriptName;
-      this.vertx = vertx;
-      this.container = container;
     }
 
     public void start() {

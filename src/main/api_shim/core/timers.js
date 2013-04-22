@@ -30,7 +30,11 @@ if (!vertx.setTimer) {
     __jvertx.cancelTimer(id);
   }
 
-  vertx.runOnLoop = function(handler) {
-    __jvertx.runOnLoop(handler);
+  vertx.runOnContext = function(task) {
+    __jvertx.runOnContext(task);
+  }
+
+  vertx.currentContext = function() {
+    return __jvertx.currentContext();
   }
 }
