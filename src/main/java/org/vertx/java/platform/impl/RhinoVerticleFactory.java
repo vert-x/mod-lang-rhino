@@ -143,70 +143,20 @@ public class RhinoVerticleFactory implements VerticleFactory {
               return super.getModuleScript(cx, moduleId, uri, uri, paths);
             }
 
-            // If loading from classpath get a proper URI
-            // Must check for each possible file to avoid getting other folders
-            // Could also use getResources and iterate
             if (uri == null) {
-              URL url = cl.getResource(moduleId + File.separator + "package.json");
-              if (url == null) {
-                url = cl.getResource(moduleId + File.separator + "index.json");
-              }
-              if (url != null) {
-                url = new File(url.getFile()).getParentFile().toURI().toURL();
-              } else {
-                if (!moduleId.endsWith(".js") && !moduleId.endsWith(".coffee")) {
-                  url = cl.getResource(moduleId + ".js"); // Try .js first
-                  if(url == null) {
-                    url = cl.getResource(moduleId + ".coffee"); // Then try .coffee
-                  }
-                } else {
-                  url = cl.getResource(moduleId);
+              URL url;
+              if (!moduleId.endsWith(".js") && !moduleId.endsWith(".coffee")) {
+                url = cl.getResource(moduleId + ".js"); // Try .js first
+                if (url == null) {
+                  url = cl.getResource(moduleId + ".coffee"); // Then try .coffee
                 }
+              } else {
+                url = cl.getResource(moduleId);
               }
-
               if (url != null) {
                 uri = url.toURI();
               }
             }
-
-            if (uri != null && uri.toString().startsWith("file:") && new File(uri).isDirectory()) {
-
-              String main = "index";
-
-              // Allow loading modules from <dir>/package.json
-              File packageFile = new File(uri.getPath(), "package.json");
-
-              if (packageFile.exists()) {
-
-                String conf = null;
-                try (Scanner scanner = new Scanner(packageFile).useDelimiter("\\A")){
-                  conf = scanner.next();
-                } catch (FileNotFoundException e) {
-                }
-
-                JsonObject json;
-                try {
-                  json = new JsonObject(conf);
-                } catch (DecodeException e) {
-                  throw new IllegalStateException("Module " + moduleId + " package.json contains invalid json");
-                }
-
-                main = json.getString("main");
-              }
-
-              // Allow loading modules from <dir>/<main>.js or <dir>/<main>.coffee
-              File mainFile = new File(uri.getPath(), main.endsWith(".js") ? main : main+".js");
-              if (!mainFile.exists() && !main.endsWith(".js") && !main.endsWith(".coffee")) {
-                mainFile = new File(uri.getPath(), main+".coffee");
-                if(mainFile.exists()) {
-                  uri = mainFile.toURI();
-                }
-              } else {
-                uri = mainFile.toURI();
-              }
-
-            }
-
             return super.getModuleScript(cx, moduleId, uri, uri, paths);
           }
         });
