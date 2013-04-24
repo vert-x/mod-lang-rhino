@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var console = require('console.js')
+var tu = require('test_utils')
+var console = require('console')
 
 function testConsole() {
   tu.azzert(typeof console.log === 'function');

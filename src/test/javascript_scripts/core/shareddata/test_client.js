@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var sharedData = require('shared_data.js')
+var tu = require('test_utils')
+var sharedData = require('shared_data')
 
 function testMap() {
   var map1 = sharedData.getMap("foo");

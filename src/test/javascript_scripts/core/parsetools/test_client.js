@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var Buffer = require('buffer.js')
-var parseTools = require('parse_tools.js')
+var tu = require('test_utils')
+var Buffer = require('buffer')
+var parseTools = require('parse_tools')
 
 function testDelimited() {
 

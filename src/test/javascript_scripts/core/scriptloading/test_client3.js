@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
+var tu = require('test_utils')
 
 // Test that you can't use load() to load the vert.x CommonJS modules
 function testCantLoadModules() {

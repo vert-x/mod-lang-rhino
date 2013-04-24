@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var fs = require("file_system.js")
-var Pump = require("pump.js")
+var tu = require('test_utils')
+var fs = require("file_system")
+var Pump = require("pump")
 
 var fileDir = "js-test-output"
 

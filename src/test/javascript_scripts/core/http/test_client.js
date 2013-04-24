@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var http = require('http.js')
-var Buffer = require("buffer.js")
+var tu = require('test_utils')
+var http = require('http')
+var Buffer = require("buffer")
 
 var server = http.createHttpServer();
 var client = http.createHttpClient().port(8080);

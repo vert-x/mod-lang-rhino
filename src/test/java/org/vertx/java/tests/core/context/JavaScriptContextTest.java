@@ -14,8 +14,33 @@
  * limitations under the License.
  */
 
-var console = require("console");
+package org.vertx.java.tests.core.context;
 
-console.log("in child.js");
+import org.vertx.java.testframework.TestBase;
+
+/**
+ * @author <a href="http://tfox.org">Tim Fox</a>
+ */
+public class JavaScriptContextTest extends TestBase {
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    startApp("core/context/test_client.js");
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    super.tearDown();
+  }
+
+  public void testRunOnContext() {
+    startTest(getMethodName());
+  }
+
+  public void testGetContext() {
+    startTest(getMethodName());
+  }
 
 
+}

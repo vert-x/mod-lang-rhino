@@ -14,8 +14,23 @@
  * limitations under the License.
  */
 
-var console = require("console");
+var tu = require('test_utils')
 
-console.log("in child.js");
+var vertx = require('vertx')
 
+// Test that you can't use load() to load the vert.x CommonJS modules
+function testRequireAll() {
+  tu.azzert(typeof vertx.createNetServer === 'function');
+  tu.azzert(typeof vertx.createNetClient === 'function');
+  tu.azzert(typeof vertx.createHttpServer === 'function');
+  tu.azzert(typeof vertx.createHttpClient === 'function');
+  tu.testComplete()
+}
 
+tu.registerTests(this);
+tu.appReady();
+
+function vertxStop() {
+  tu.unregisterAll();
+  tu.appStopped();
+}

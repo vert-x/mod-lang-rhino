@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var eb = require("event_bus.js");
-var timers = require("timer.js");
-var Buffer = require("buffer.js");
+var tu = require('test_utils')
+var eb = require("event_bus");
+var timers = require("timer");
+var Buffer = require("buffer");
 var address = 'foo-address';
 
 var sent = {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var f = require("core/scriptloading/mod.js")
-var console = require("console.js")
+var tu = require('test_utils')
+var f = require("core/scriptloading/mod")
+var console = require("console")
 
 function testLoadInCommonJSModuleDoesntPolluteGlobal() {
   tu.azzert(f() == "blah");

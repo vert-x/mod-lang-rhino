@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var vertx = require('vertx.js')
+var tu = require('test_utils')
+var vertx = require('vertx')
 
 var server = vertx.createHttpServer();
 var client = vertx.createHttpClient();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
+var tu = require('test_utils')
 load("core/scriptloading/script1.js");
 
 function testScriptLoading() {

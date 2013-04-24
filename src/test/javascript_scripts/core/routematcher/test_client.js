@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var http = require('http.js')
+var tu = require('test_utils')
+var http = require('http')
 
 var server = http.createHttpServer();
 var rm = new http.RouteMatcher();

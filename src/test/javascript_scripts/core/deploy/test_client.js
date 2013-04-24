@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var container = require('container.js')
+var tu = require('test_utils')
+var container = require('container')
 
 function testDeploy1() {
   container.deployVerticle("core/deploy/child.js", function(err, deployID) {

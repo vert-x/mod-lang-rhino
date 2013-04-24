@@ -14,8 +14,28 @@
  * limitations under the License.
  */
 
-var console = require("console");
+var tu = require('test_utils')
+var vertx = require('vertx.js')
 
-console.log("in child.js");
+function testRunOnContext() {
+  vertx.runOnContext(function() {
+    tu.checkThread();
+    tu.testComplete();
+  })
+}
 
+function testGetContext() {
+  var ctx = vertx.currentContext();
+  ctx.runOnContext(function() {
+    tu.checkThread();
+    tu.testComplete();
+  })
+}
 
+tu.registerTests(this);
+tu.appReady();
+
+function vertxStop() {
+  tu.unregisterAll();
+  tu.appStopped();
+}

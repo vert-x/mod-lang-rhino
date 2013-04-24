@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var timers = require('timer.js')
+var tu = require('test_utils')
+var timers = require('timer')
 
 function testOneOff() {
   var count = 0;

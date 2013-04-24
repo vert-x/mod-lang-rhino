@@ -2,12 +2,13 @@ if (typeof module === 'undefined') {
   throw "Use require() to load Vert.x API modules"
 }
 
-var vassert = Packages.org.vertx.testtools.VertxAssert;
+var vertxTests = {};
 
-var initTests = function (top) {
-  var methodName = vertx.config.methodName;
-  vassert.initialize(__jvertx);
+var container = require("container");
+
+vertxTests.startTests = function (top) {
+  var methodName = container.config.methodName;
   top[methodName]();
 }
 
-module.exports = initTests;
+module.exports = vertxTests;

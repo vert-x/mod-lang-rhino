@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-var net = require('net.js')
-var Buffer = require('buffer.js')
+var tu = require('test_utils')
+var net = require('net')
+var Buffer = require('buffer')
 
 var client;
 

@@ -28,16 +28,16 @@ function addProps(obj) {
   }
 }
 
-vertx.Buffer = require('buffer.js');
-vertx.eventBus = require('event_bus.js');
-addProps(require('net.js'));
-addProps(require('http.js'));
-vertx.Pump = require('pump.js');
-addProps(require('timer.js'));
-addProps(require('sockjs.js'));
-addProps(require('parse_tools.js'));
-addProps(require('shared_data.js'));
-vertx.fileSystem = require('file_system.js');
+vertx.Buffer = require('buffer');
+vertx.eventBus = require('event_bus');
+addProps(require('net'));
+addProps(require('http'));
+vertx.Pump = require('pump');
+addProps(require('timer'));
+addProps(require('sockjs'));
+addProps(require('parse_tools'));
+addProps(require('shared_data'));
+vertx.fileSystem = require('file_system');
 
 vertx.runOnContext = function(task) {
   __jvertx.runOnContext(task);
