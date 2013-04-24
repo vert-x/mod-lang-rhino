@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
+package org.vertx.java.tests.core.console;
 
-var myglobal;
+import org.vertx.java.testframework.TestBase;
 
-function testIsolation() {
-  tu.azzert(myglobal == undefined);
-  myglobal = 123;
-  tu.testComplete();
-}
+/**
+ * @author <a href="http://tfox.org">Tim Fox</a>
+ */
+public class JavaScriptConsoleTest extends TestBase {
 
-tu.registerTests(this);
-tu.appReady();
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    startApp("core/console/test_client.js");
+  }
 
-function vertxStop() {
-  tu.unregisterAll();
-  tu.appStopped();
+  @Override
+  protected void tearDown() throws Exception {
+    super.tearDown();
+  }
+
+  public void testConsole() {
+    startTest(getMethodName());
+  }
+
+
 }

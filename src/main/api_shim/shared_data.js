@@ -14,7 +14,29 @@
  * limitations under the License.
  */
 
-var vertx = vertx || {};
+if (typeof module === 'undefined') {
+  throw "Use require() to load Vert.x API modules"
+}
 
-if (!vertx.Buffer)
-  vertx.Buffer = org.vertx.java.core.buffer.Buffer;
+var sharedData = {};
+
+sharedData.getMap = function(name) {
+  return __jvertx.sharedData().getMap(name);
+}
+
+sharedData.getSet = function(name) {
+  return __jvertx.sharedData().getSet(name);
+}
+
+sharedData.removeMap = function(name) {
+  return __jvertx.sharedData().removeMap(name);
+}
+
+sharedData.removeSet = function(name) {
+  return __jvertx.sharedData().removeSet(name);
+}
+
+module.exports = sharedData;
+
+
+

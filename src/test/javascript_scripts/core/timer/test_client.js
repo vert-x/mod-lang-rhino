@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
-
-var tu = new TestUtils();
+var tu = require('test_utils.js')
+var timers = require('timer.js')
 
 function testOneOff() {
   var count = 0;
-  var id = vertx.setTimer(1000, function(timer_id) {
+  var id = timers.setTimer(1000, function(timer_id) {
     tu.checkThread();
     tu.azzert(id === timer_id);
     tu.azzert(count === 0);
@@ -34,12 +32,12 @@ function testPeriodic() {
   var numFires = 10;
   var delay = 100;
   var count = 0;
-  var id = vertx.setPeriodic(delay, function(timer_id) {
+  var id = timers.setPeriodic(delay, function(timer_id) {
     tu.checkThread();
     tu.azzert(id === timer_id);
     count++;
     if (count === numFires) {
-      vertx.cancelTimer(timer_id);
+      timers.cancelTimer(timer_id);
       setEndTimer();
     }
     if (count > numFires) {
@@ -49,7 +47,7 @@ function testPeriodic() {
 }
 
 function setEndTimer() {
-  vertx.setTimer(10, function() {
+  timers.setTimer(10, function() {
     tu.testComplete();
   })
 }

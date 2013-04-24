@@ -50,7 +50,6 @@ public class RhinoVerticleFactory implements VerticleFactory {
   private Vertx vertx;
   private Container container;
 
-  private static ThreadLocal<ScriptableObject> scopeThreadLocal = new ThreadLocal<>();
   private static ThreadLocal<ClassLoader> clThreadLocal = new ThreadLocal<>();
   private static CoffeeScriptCompiler coffeeScriptCompiler = null;
   private ScriptableObject scope;
@@ -85,11 +84,12 @@ public class RhinoVerticleFactory implements VerticleFactory {
   public void close() {
   }
 
-  public static synchronized void load(String moduleName) throws Exception {
-    ScriptableObject scope = scopeThreadLocal.get();
+  public static synchronized Object load(Context cx, Scriptable thisObj, Object[] args, Function funObj) throws Exception {
     ClassLoader cl = clThreadLocal.get();
-    Context cx = Context.getCurrentContext();
+    Scriptable scope = funObj.getParentScope();
+    String moduleName = (String)args[0];
     loadScript(cl, cx, scope, moduleName);
+    return null;
   }
 
   private void addStandardObjectsToScope(ScriptableObject scope) {
@@ -125,7 +125,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
   }
 
   // Support for loading from CommonJS modules
-  private static Require installRequire(final ClassLoader cl, Context cx, ScriptableObject scope) {
+  private static Require installRequire(final ClassLoader cl, Context cx, ScriptableObject globalScope) {
     RequireBuilder rb = new RequireBuilder();
     rb.setSandboxed(false);
 
@@ -222,12 +222,12 @@ public class RhinoVerticleFactory implements VerticleFactory {
       }
     });
 
-    Require require = rb.createRequire(cx, scope);
+    Require require = rb.createRequire(cx, globalScope);
 
     return require;
   }
 
-  private static void loadScript(ClassLoader cl, Context cx, ScriptableObject scope, String scriptName) throws Exception {
+  private static void loadScript(ClassLoader cl, Context cx, Scriptable scope, String scriptName) throws Exception {
     Reader reader;
     if (scriptName != null && scriptName.endsWith(".coffee")) {
       URL resource = cl.getResource(scriptName);
@@ -276,15 +276,16 @@ public class RhinoVerticleFactory implements VerticleFactory {
       Context cx = Context.enter();
       cx.setOptimizationLevel(2);
       try {
-        ScriptableObject scope = getScope(cx);
-        // This is pretty ugly - we have to set some thread locals so we can get a reference to the scope and
+        // This is the global scope used to store JS native objects
+        ScriptableObject globalScope = getScope(cx);
+        // This is pretty ugly - we have to set a thread local so we can get a reference to the
         // classloader in the load() method - this is because Rhino insists load() must be static
-        scopeThreadLocal.set(scope);
+        // what a PITA!
         clThreadLocal.set(cl);
-        Require require = installRequire(cl, cx, scope);
+        Require require = installRequire(cl, cx, globalScope);
         Scriptable script = require.requireMain(cx, scriptName);
         try {
-          stopFunction = (Function) script.get("vertxStop", scope);
+          stopFunction = (Function) script.get("vertxStop", globalScope);
         } catch (ClassCastException e) {
           // Get CCE if no such function
           stopFunction = null;
@@ -303,8 +304,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
           Context.exit();
         }
       }
-      // Make sure we remove the threadlocals or we will have a leak
-      scopeThreadLocal.remove();
+      // Make sure we remove the threadlocal or we will have a leak
       clThreadLocal.remove();
     }
   }

@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-var vertx = vertx || {};
+var tu = require('test_utils.js')
+var f = require("core/scriptloading/mod.js")
+var console = require("console.js")
 
-if (!vertx.getMap) {
-
-  vertx.getMap = function(name) {
-    return __jvertx.sharedData().getMap(name);
-  }
-
-  vertx.getSet = function(name) {
-    return __jvertx.sharedData().getSet(name);
-  }
-
-  vertx.removeMap = function(name) {
-    return __jvertx.sharedData().removeMap(name);
-  }
-
-  vertx.removeSet = function(name) {
-    return __jvertx.sharedData().removeSet(name);
-  }
+function testLoadInCommonJSModuleDoesntPolluteGlobal() {
+  tu.azzert(f() == "blah");
+  tu.azzert(typeof foo === 'undefined')
+  tu.testComplete()
 }
 
+tu.registerTests(this);
+tu.appReady();
 
-
+function vertxStop() {
+  tu.unregisterAll();
+  tu.appStopped();
+}

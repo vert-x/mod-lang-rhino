@@ -27,6 +27,7 @@ public class JavaScriptScriptLoadingTest extends TestBase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
+
   }
 
   @Override
@@ -36,7 +37,17 @@ public class JavaScriptScriptLoadingTest extends TestBase {
 
   @Test
   public void testScriptLoading() throws Exception {
-    startApp("core/scriptloading/test_client.js");
+    startApp("core/scriptloading/test_client1.js");
+    startTest(getMethodName());
+  }
+
+  public void testLoadInCommonJSModuleDoesntPolluteGlobal() throws Exception {
+    startApp("core/scriptloading/test_client2.js");
+    startTest(getMethodName());
+  }
+
+  public void testCantLoadModules() throws Exception {
+    startApp("core/scriptloading/test_client3.js");
     startTest(getMethodName());
   }
 

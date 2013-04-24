@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
+var tu = require('test_utils.js')
+var http = require('http.js')
 
-var tu = new TestUtils();
-
-
-var server = vertx.createHttpServer();
-var rm = new vertx.RouteMatcher();
+var server = http.createHttpServer();
+var rm = new http.RouteMatcher();
 server.requestHandler(rm);
 
-var client = vertx.createHttpClient().port(8080);
+var client = http.createHttpClient().port(8080);
 
 var params = { "name" : "foo", "version" : "v0.1"};
 var re_params = { "param0" : "foo", "param1" :"v0.1"};

@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-var vertx = vertx || {};
+var tu = require('test_utils.js')
 
-if (!vertx.createDelimitedParser) {
-  vertx.createDelimitedParser = function(delim, output) {
-    return org.vertx.java.core.parsetools.RecordParser.newDelimited(delim, output);
+// Test that you can't use load() to load the vert.x CommonJS modules
+function testCantLoadModules() {
+  try {
+    load("vertx.js");
+    tu.azzert(false); // Should throw exception
+  } catch (err) {
+    // OK
   }
+  tu.testComplete()
+}
 
-  vertx.createFixedParser = function(size, output) {
-    return org.vertx.java.core.parsetools.RecordParser.newFixed(size, output);
-  }
+tu.registerTests(this);
+tu.appReady();
+
+function vertxStop() {
+  tu.unregisterAll();
+  tu.appStopped();
 }

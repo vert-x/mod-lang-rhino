@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
+var console = require("console.js");
+
+console.log("in child.js");
 
 

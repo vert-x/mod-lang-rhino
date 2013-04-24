@@ -1,69 +1,62 @@
-var TestUtils = function() {
+if (typeof module === 'undefined') {
+  throw "Use require() to load Vert.x API modules"
+}
 
-  var that = this;
-  var jutils = new org.vertx.java.testframework.TestUtils(__jvertx);
+var testUtils = {};
 
-  that.azzert = function(result, message) {
-    if (message) {
-      jutils.azzert(result, message);
-    } else {
-      jutils.azzert(result);
+var jutils = new org.vertx.java.testframework.TestUtils(__jvertx);
+
+testUtils.azzert = function(result, message) {
+  if (message) {
+    jutils.azzert(result, message);
+  } else {
+    jutils.azzert(result);
+  }
+}
+
+testUtils.appReady = function() {
+  jutils.appReady();
+}
+
+testUtils.appStopped = function() {
+  jutils.appStopped();
+}
+
+testUtils.testComplete = function() {
+  jutils.testComplete();
+}
+
+testUtils.register = function(testName, test) {
+  jutils.register(testName, test);
+}
+
+testUtils.registerTests = function(obj) {
+  for(var key in obj){
+    var val = obj[key];
+    if (typeof val === 'function' && key.substring(0, 4) === 'test') {
+      jutils.register(key, val);
     }
-  }
+ }
+}
 
-  that.appReady = function() {
-    jutils.appReady();
-  }
+testUtils.unregisterAll = function() {
+  jutils.unregisterAll();
+}
 
-  that.appStopped = function() {
-    jutils.appStopped();
-  }
+testUtils.checkThread = function() {
+  jutils.checkThread();
+}
 
-  that.testComplete = function() {
-    jutils.testComplete();
-  }
+testUtils.generateRandomBuffer = function(size) {
+  return jutils.generateRandomBuffer(size);
+}
 
-  that.register = function(testName, test) {
-    jutils.register(testName, test);
-  }
+testUtils.randomUnicodeString = function(size) {
+  return jutils.randomUnicodeString(size);
+}
 
-  that.registerTests = function(obj) {
-    for(var key in obj){
-      var val = obj[key];
-      if (typeof val === 'function' && key.substring(0, 4) === 'test') {
-        jutils.register(key, val);
-      }
-   }
-  }
+testUtils.buffersEqual = function(buff1, buff2) {
+  return jutils.buffersEqual(buff1, buff2);
+}
 
-  that.unregisterAll = function() {
-    jutils.unregisterAll();
-  }
-
-  that.checkThread = function() {
-    jutils.checkThread();
-  }
-
-  that.generateRandomBuffer = function(size) {
-    return jutils.generateRandomBuffer(size);
-  }
-
-  that.randomUnicodeString = function(size) {
-    return jutils.randomUnicodeString(size);
-  }
-
-  that.buffersEqual = function(buff1, buff2) {
-    return jutils.buffersEqual(buff1, buff2);
-  }
-
-};
-
-(function() {
-    var instance = null;
-    this.get =  function() {
-        if(instance == null){
-            instance = new TestUtils();
-		}
-        return instance;
-    };
-}).call((this.module && module.exports)? module.exports : this.TestUtils);
+module.exports = testUtils;

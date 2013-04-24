@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
-
-var tu = new TestUtils();
+var tu = require('test_utils.js')
+var Buffer = require('buffer.js')
+var parseTools = require('parse_tools.js')
 
 function testDelimited() {
 
@@ -31,11 +30,11 @@ function testDelimited() {
     }
   }
 
-  var rp = new vertx.createDelimitedParser('\n', output);
+  var rp = parseTools.createDelimitedParser('\n', output);
 
   var input = "qwdqwdline1\nijijiline2\njline3\n";
 
-  var buffer = new vertx.Buffer(input);
+  var buffer = new Buffer(input);
 
   rp.handle(buffer);
 }
@@ -55,9 +54,9 @@ function testFixed() {
     }
   }
 
-  var rp = new vertx.createFixedParser(chunkSize, output);
+  var rp = parseTools.createFixedParser(chunkSize, output);
 
-  var input = new vertx.Buffer(0);
+  var input = new Buffer(0);
   for (var i = 0; i < numChunks; i++) {
     var buff = tu.generateRandomBuffer(chunkSize);
     input.appendBuffer(buff);

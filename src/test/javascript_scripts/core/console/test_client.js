@@ -15,12 +15,12 @@
  */
 
 var tu = require('test_utils.js')
+var console = require('console.js')
 
-var myglobal;
-
-function testIsolation() {
-  tu.azzert(myglobal == undefined);
-  myglobal = 123;
+function testConsole() {
+  tu.azzert(typeof console.log === 'function');
+  tu.azzert(typeof console.warn === 'function');
+  tu.azzert(typeof console.error === 'function');
   tu.testComplete();
 }
 

@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
-var vertx = vertx || {};
+var tu = require('test_utils.js')
+load("core/scriptloading/script1.js");
 
-if (!vertx.setTimer) {
+function testScriptLoading() {
+  tu.azzert(func1() === 'foo');
+  tu.testComplete();
+}
 
-  vertx.setTimer = function(delay, handler) {
-    return __jvertx.setTimer(delay, handler);
-  }
+tu.registerTests(this);
+tu.appReady();
 
-  vertx.setPeriodic = function(interval, handler) {
-    return __jvertx.setPeriodic(interval, handler);
-  }
-
-  vertx.cancelTimer = function(id) {
-    __jvertx.cancelTimer(id);
-  }
-
-  vertx.runOnContext = function(task) {
-    __jvertx.runOnContext(task);
-  }
-
-  vertx.currentContext = function() {
-    return __jvertx.currentContext();
-  }
+function vertxStop() {
+  tu.unregisterAll();
+  tu.appStopped();
 }

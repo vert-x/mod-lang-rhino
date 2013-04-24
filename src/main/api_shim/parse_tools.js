@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-var tu = TestUtils.get();
-
-function func2() {
-  try {
-    load('does-not-exist.js');
-    tu.azzert(false, 'Should throw exception');
-  } catch (err) {
-    // OK
-  }
-  return "bar";
+if (typeof module === 'undefined') {
+  throw "Use require() to load Vert.x API modules"
 }
+
+var parseTools = {};
+
+parseTools.createDelimitedParser = function(delim, output) {
+  return org.vertx.java.core.parsetools.RecordParser.newDelimited(delim, output);
+}
+
+parseTools.createFixedParser = function(size, output) {
+  return org.vertx.java.core.parsetools.RecordParser.newFixed(size, output);
+}
+
+module.exports = parseTools;
+

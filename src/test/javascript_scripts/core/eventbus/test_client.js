@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
-
-var tu = new TestUtils();
-
-// Most testing occurs in the Java tests
-
-var eb = vertx.eventBus;
+var tu = require('test_utils.js')
+var eb = require("event_bus.js");
+var timers = require("timer.js");
+var Buffer = require("buffer.js");
 var address = 'foo-address';
 
 var sent = {
@@ -92,7 +88,7 @@ function testUnregister() {
     tu.azzert(eb.unregisterHandler(address, MyHandler) === eb);
     handled = true;
     // Wait a little while to allow any other messages to arrive
-    vertx.setTimer(100, function() {
+    timers.setTimer(100, function() {
       tu.testComplete();
     })
   });
@@ -192,7 +188,7 @@ function testEchoJson() {
 }
 
 function testEchoBuffer() {
-  echo(new org.vertx.java.core.buffer.Buffer);
+  echo(new Buffer);
 }
 
 function testEchoNull() {

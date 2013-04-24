@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-load("test_utils.js")
-load("core/scriptloading/script1.js");
-
-var tu = TestUtils.get();
-
-function testScriptLoading() {
-  tu.azzert(func1() === 'foo');
-  tu.testComplete();
+if (typeof module === 'undefined') {
+  throw "Use require() to load Vert.x API modules"
 }
 
-tu.registerTests(this);
-tu.appReady();
-
-function vertxStop() {
-  tu.unregisterAll();
-  tu.appStopped();
-}
+module.exports = org.vertx.java.core.buffer.Buffer;

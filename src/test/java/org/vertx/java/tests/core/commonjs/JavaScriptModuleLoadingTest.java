@@ -40,5 +40,4 @@ public class JavaScriptModuleLoadingTest extends TestBase {
     startTest(getMethodName());
   }
 
-
 }

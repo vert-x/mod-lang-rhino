@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
-
-var tu = new TestUtils();
-
-var fs = vertx.fileSystem;
+var tu = require('test_utils.js')
+var fs = require("file_system.js")
+var Pump = require("pump.js")
 
 var fileDir = "js-test-output"
 
@@ -50,7 +47,6 @@ function testMove() {
       tu.azzert(err === null);
       fs.readFile(to, function(err, res) {
         tu.azzert(err === null);
-        console.log("res is "+ res);
         tu.azzert(res.toString() === content);
         fs.exists(from, function(err, res) {
           tu.azzert(err === null);
@@ -128,7 +124,7 @@ function testPumpFile() {
         tu.azzert(err === null);
         var rs = file1;
         var ws = file2;
-        var pump = new vertx.Pump(rs, ws);
+        var pump = new Pump(rs, ws);
         pump.start();
         rs.endHandler(function() {
           file1.close(function() {

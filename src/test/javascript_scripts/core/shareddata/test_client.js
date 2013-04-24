@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
-
-var tu = new TestUtils();
+var tu = require('test_utils.js')
+var sharedData = require('shared_data.js')
 
 function testMap() {
-  var map1 = vertx.getMap("foo");
+  var map1 = sharedData.getMap("foo");
   tu.azzert(typeof map1 != undefined);
-  var map2 = vertx.getMap("foo");
+  var map2 = sharedData.getMap("foo");
   tu.azzert(typeof map2 != undefined);
   tu.azzert(map1 === map2);
-  var map3 = vertx.getMap("bar");
+  var map3 = sharedData.getMap("bar");
   tu.azzert(typeof map3 != undefined);
   tu.azzert(map3 != map2);
 
@@ -63,12 +61,12 @@ function testMap() {
 
 function testSet() {
 
-  var set1 = vertx.getSet("foo");
+  var set1 = sharedData.getSet("foo");
   tu.azzert(typeof set1 != undefined);
-  var set2 = vertx.getSet("foo");
+  var set2 = sharedData.getSet("foo");
   tu.azzert(typeof set2 != undefined);
   tu.azzert(set1 === set2);
-  var set3 = vertx.getMap("bar");
+  var set3 = sharedData.getMap("bar");
   tu.azzert(typeof set3 != undefined);
   tu.azzert(set3 != set2);
 

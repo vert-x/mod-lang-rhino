@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-var tu = require('test_utils.js')
-
-var myglobal;
-
-function testIsolation() {
-  tu.azzert(myglobal == undefined);
-  myglobal = 123;
-  tu.testComplete();
+if (typeof module === 'undefined') {
+  throw "Use require() to load Vert.x API modules"
 }
 
-tu.registerTests(this);
-tu.appReady();
+var timers = {};
 
-function vertxStop() {
-  tu.unregisterAll();
-  tu.appStopped();
+timers.setTimer = function(delay, handler) {
+  return __jvertx.setTimer(delay, handler);
 }
+
+timers.setPeriodic = function(interval, handler) {
+  return __jvertx.setPeriodic(interval, handler);
+}
+
+timers.cancelTimer = function(id) {
+  __jvertx.cancelTimer(id);
+}
+
+module.exports = timers;

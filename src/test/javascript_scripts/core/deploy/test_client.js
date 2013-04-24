@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
-
-var tu = new TestUtils();
-
-var eb = vertx.eventBus;
+var tu = require('test_utils.js')
+var container = require('container.js')
 
 function testDeploy1() {
-  vertx.deployVerticle("core/deploy/child.js", function(err, deployID) {
+  container.deployVerticle("core/deploy/child.js", function(err, deployID) {
     tu.checkThread();
     tu.azzert(err === null);
     tu.azzert(deployID != null);
@@ -32,7 +28,7 @@ function testDeploy1() {
 
 function testDeploy2() {
   var conf = {blah: 'foo'};
-  vertx.deployVerticle("core/deploy/child.js", conf, function(err, deployID) {
+  container.deployVerticle("core/deploy/child.js", conf, function(err, deployID) {
     tu.checkThread();
     tu.azzert(err === null);
     tu.azzert(deployID != null);
@@ -41,7 +37,7 @@ function testDeploy2() {
 }
 
 function testDeploy3() {
-  vertx.deployVerticle("core/deploy/child.js", 12, function(err, deployID) {
+  container.deployVerticle("core/deploy/child.js", 12, function(err, deployID) {
     tu.checkThread();
     tu.azzert(err === null);
     tu.azzert(deployID != null);
@@ -51,11 +47,8 @@ function testDeploy3() {
 
 function testDeploy4() {
   var conf = {blah: 'foo'};
-  vertx.deployVerticle("core/deploy/child.js", conf, 12, function(err, deployID) {
+  container.deployVerticle("core/deploy/child.js", conf, 12, function(err, deployID) {
     tu.checkThread();
-    if (err) {
-      err.printStackTrace();
-    }
     tu.azzert(err === null);
     tu.azzert(deployID != null);
     tu.testComplete();
@@ -63,7 +56,7 @@ function testDeploy4() {
 }
 
 function testDeployFail() {
-  vertx.deployVerticle("core/deploy/notexist.js", function(err, deployID) {
+  container.deployVerticle("core/deploy/notexist.js", function(err, deployID) {
     tu.checkThread();
     tu.azzert(err != null);
     tu.azzert(deployID === null);
@@ -72,9 +65,9 @@ function testDeployFail() {
 }
 
 function testUndeploy() {
-  vertx.deployVerticle("core/deploy/child.js", function(err, deployID) {
+  container.deployVerticle("core/deploy/child.js", function(err, deployID) {
     tu.checkThread();
-    vertx.undeployVerticle(deployID, function(err) {
+    container.undeployVerticle(deployID, function(err) {
       tu.azzert(err === null);
       tu.testComplete();
     });
@@ -82,9 +75,9 @@ function testUndeploy() {
 }
 
 function testUndeployFail() {
-  vertx.deployVerticle("core/deploy/child.js", function(err, deployID) {
+  container.deployVerticle("core/deploy/child.js", function(err, deployID) {
     tu.checkThread();
-    vertx.undeployVerticle('not_id', function(err) {
+    container.undeployVerticle('not_id', function(err) {
       tu.azzert(err != null);
       tu.testComplete();
     });
@@ -92,7 +85,7 @@ function testUndeployFail() {
 }
 
 function testDeployWorker() {
-  vertx.deployWorkerVerticle("core/deploy/child.js", function(err, deployID) {
+  container.deployWorkerVerticle("core/deploy/child.js", function(err, deployID) {
     tu.checkThread();
     tu.azzert(err === null);
     tu.azzert(deployID != null);

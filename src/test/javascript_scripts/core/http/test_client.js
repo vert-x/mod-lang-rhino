@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
+var tu = require('test_utils.js')
+var http = require('http.js')
+var Buffer = require("buffer.js")
 
-var tu = new TestUtils();
-
-var server = vertx.createHttpServer();
-var client = vertx.createHttpClient().port(8080);
-var logger = vertx.logger;
+var server = http.createHttpServer();
+var client = http.createHttpClient().port(8080);
 
 // This is just a basic test. Most testing occurs in the Java tests
 
@@ -206,7 +204,7 @@ function httpMethod(ssl, method, chunked) {
       req.response.statusCode(statusCode);
     }
     req.response.statusMessage(statusMessage);
-    var body = new vertx.Buffer(0);
+    var body = new Buffer(0);
     req.dataHandler(function(data) {
       tu.checkThread();
       body.appendBuffer(data);
@@ -248,7 +246,7 @@ function httpMethod(ssl, method, chunked) {
       tu.azzert(statusCode === resp.statusCode());
       tu.azzert('vrheader1' === resp.headers()['rheader1']);
       tu.azzert('vrheader2' === resp.headers()['rheader2']);
-      var body = new vertx.Buffer(0);
+      var body = new Buffer(0);
       resp.dataHandler(function(data) {
         tu.checkThread();
         body.appendBuffer(data);

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-load('test_utils.js')
-load('vertx.js')
-
-var tu = new TestUtils();
+var tu = require('test_utils.js')
+var net = require('net.js')
+var Buffer = require('buffer.js')
 
 var client;
 
 function testConnect() {
 
-  var server = vertx.createNetServer();
+  var server = net.createNetServer();
 
   server.connectHandler(function(sock) {
     tu.checkThread();
@@ -36,7 +35,7 @@ function testConnect() {
   server.listen(1234, 'localhost', function(err, server) {
 
     tu.azzert(err === null);
-    client = vertx.createNetClient();
+    client = net.createNetClient();
 
     client.connect(1234, 'localhost', function(err, sock) {
 
@@ -47,16 +46,15 @@ function testConnect() {
         tu.testComplete();
       });
 
-      sock.write(new vertx.Buffer('this is a buffer'));
+      sock.write(new Buffer('this is a buffer'));
     });
   });
-
 
 }
 
 function testNoConnect() {
 
-  client = vertx.createNetClient();
+  client = net.createNetClient();
 
   client.connect(1234, 'not-exists', function(err, sock) {
 
