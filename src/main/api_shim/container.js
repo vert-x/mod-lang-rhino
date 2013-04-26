@@ -47,8 +47,6 @@ function deploy(deployType, name, args) {
     instances = 1;
   }
 
-  //console.log("Deploying " + name + " config: " + config + " multi-threaded " + multiThreaded + " instances " + instances + " doneHandler " + doneHandler);
-
   switch (deployType) {
     case VERTICLE: {
       __jcontainer.deployVerticle(name, config, instances, doneHandler);

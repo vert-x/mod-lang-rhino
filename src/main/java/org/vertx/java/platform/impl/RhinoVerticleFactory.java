@@ -24,8 +24,6 @@ import org.mozilla.javascript.commonjs.module.provider.ModuleSource;
 import org.mozilla.javascript.commonjs.module.provider.SoftCachingModuleScriptProvider;
 import org.mozilla.javascript.commonjs.module.provider.UrlModuleSourceProvider;
 import org.vertx.java.core.Vertx;
-import org.vertx.java.core.json.DecodeException;
-import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
 import org.vertx.java.platform.Verticle;
@@ -34,7 +32,6 @@ import org.vertx.java.platform.VerticleFactory;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.Scanner;
 
 
 /**

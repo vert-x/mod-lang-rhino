@@ -2,9 +2,7 @@ package org.vertx.java.platform.impl;
 
 import org.mozilla.javascript.Scriptable;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /*
  * Copyright 2013 Red Hat, Inc.

@@ -47,10 +47,4 @@ vertx.currentContext = function() {
   return __jvertx.currentContext();
 }
 
-var console = require("console")
-
-console.log("module.exports is " + module.exports)
-console.log("exports is " + exports)
-console.log("equal? " + (module.exports === exports))
-
 module.exports = vertx;
