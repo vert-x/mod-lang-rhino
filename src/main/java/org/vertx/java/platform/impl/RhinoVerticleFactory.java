@@ -50,7 +50,7 @@ public class RhinoVerticleFactory implements VerticleFactory {
   private Vertx vertx;
   private Container container;
 
-  private static ThreadLocal<ClassLoader> clThreadLocal = new ThreadLocal<>();
+  //private static ThreadLocal<ClassLoader> clThreadLocal = new ThreadLocal<>();
   private static CoffeeScriptCompiler coffeeScriptCompiler = null;
   private ScriptableObject scope;
 
@@ -85,10 +85,14 @@ public class RhinoVerticleFactory implements VerticleFactory {
   }
 
   public static synchronized Object load(Context cx, Scriptable thisObj, Object[] args, Function funObj) throws Exception {
-    ClassLoader cl = clThreadLocal.get();
-    Scriptable scope = funObj.getParentScope();
+    ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    Scriptable scope = thisObj;
     String moduleName = (String)args[0];
+    // We set a global so we can test for it within a Vert.x module to make sure people aren't using load()
+    // to load Vert.x api modules
+    ScriptableObject.putProperty(scope, "__vertxload", "true");
     loadScript(cl, cx, scope, moduleName);
+    ScriptableObject.deleteProperty(scope, "__vertxload");
     return null;
   }
 
@@ -228,10 +232,6 @@ public class RhinoVerticleFactory implements VerticleFactory {
       try {
         // This is the global scope used to store JS native objects
         ScriptableObject globalScope = getScope(cx);
-        // This is pretty ugly - we have to set a thread local so we can get a reference to the
-        // classloader in the load() method - this is because Rhino insists load() must be static
-        // what a PITA!
-        clThreadLocal.set(cl);
         Require require = installRequire(cl, cx, globalScope);
         Scriptable script = require.requireMain(cx, scriptName);
         try {
@@ -254,8 +254,6 @@ public class RhinoVerticleFactory implements VerticleFactory {
           Context.exit();
         }
       }
-      // Make sure we remove the threadlocal or we will have a leak
-      clThreadLocal.remove();
     }
   }
 }

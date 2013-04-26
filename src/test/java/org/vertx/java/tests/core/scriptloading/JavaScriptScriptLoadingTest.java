@@ -56,5 +56,9 @@ public class JavaScriptScriptLoadingTest extends TestBase {
     startTest(getMethodName());
   }
 
+  public void testLoadExecutesInSameScopeAsCaller() throws Exception {
+    startApp("core/scriptloading/test_client5.js");
+    startTest(getMethodName());
+  }
 
 }

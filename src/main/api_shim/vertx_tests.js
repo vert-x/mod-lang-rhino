@@ -1,5 +1,5 @@
-if (typeof module === 'undefined') {
-  throw "Use require() to load Vert.x API modules"
+if (typeof __vertxload === 'string') {
+  throw "Use require() to load the Vert.x API"
 }
 
 var vertxTests = {};

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-if (typeof module === 'undefined') {
-  throw "Use require() to load Vert.x API modules"
+if (typeof __vertxload === 'string') {
+  throw "Use require() to load the Vert.x API"
 }
 
 var vertx = {};
@@ -46,5 +46,11 @@ vertx.runOnContext = function(task) {
 vertx.currentContext = function() {
   return __jvertx.currentContext();
 }
+
+var console = require("console")
+
+console.log("module.exports is " + module.exports)
+console.log("exports is " + exports)
+console.log("equal? " + (module.exports === exports))
 
 module.exports = vertx;
