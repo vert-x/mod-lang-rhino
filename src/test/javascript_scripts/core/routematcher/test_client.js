@@ -120,8 +120,8 @@ function testRouteNoMatch() {
 function route(method, regex, pattern, params, uri) {
 
   var handler = function(req) {
-    for (k in req.params()) {
-      tu.azzert(params[k] === req.params()[k]);
+    for (k in params) {
+      tu.azzert(params[k] === req.params().get(k));
     }
     req.response.end();
   }
