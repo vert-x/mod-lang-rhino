@@ -51,13 +51,13 @@ function wrappedRequestHandler(handler) {
     };
     req.headers = function() {
       if (!reqHeaders) {
-        reqHeaders = new org.vertx.java.platform.impl.ScriptableMap(jreq.headers());
+        reqHeaders = wrapMultiMap(jreq.headers());
       }
       return reqHeaders;
     };
     req.params = function() {
       if (!reqParams) {
-        reqParams = new org.vertx.java.platform.impl.ScriptableMap(jreq.params());
+        reqParams = wrapMultiMap(jreq.params());
       }
       return reqParams;
     };
@@ -107,7 +107,7 @@ function wrappedRequestHandler(handler) {
     };
     resp.headers = function() {
       if (!respHeaders) {
-        respHeaders = new org.vertx.java.platform.impl.ScriptableMap(jresp.headers());
+        respHeaders = wrapMultiMap(jresp.headers());
       }
       return respHeaders;
     };
@@ -115,28 +115,14 @@ function wrappedRequestHandler(handler) {
       jresp.putHeader(k, v);
       return resp;
     };
-    resp.putAllHeaders = function(other) {
-      var hdrs = resp.headers();
-      for (var k in other) {
-        hdrs[k] = other[k];
-      }
-      return resp;
-    };
     resp.trailers = function() {
       if (!respTrailers) {
-        respTrailers = new org.vertx.java.platform.impl.ScriptableMap(jresp.trailers());
+        respTrailers = wrapMultiMap(jresp.trailers());
       }
       return respTrailers;
     };
     resp.putTrailer = function(k, v) {
       jresp.putTrailer(k, v);
-      return resp;
-    };
-    resp.putAllTrailers = function(other) {
-      var trlrs = resp.trailers();
-      for (var k in other) {
-        trlrs[k] = other[k];
-      }
       return resp;
     };
     resp.write = function(arg0, arg1) {
@@ -175,6 +161,7 @@ function wrappedRequestHandler(handler) {
 function wrapWebsocketHandler(server, handler) {
   return function(jwebsocket) {
     var ws = {};
+    var headers = null;
     readStream(ws, jwebsocket);
     writeStream(ws, jwebsocket);
     ws.binaryHandlerID = function() {
@@ -203,6 +190,12 @@ function wrapWebsocketHandler(server, handler) {
       ws.reject = function() {
         jwebsocket.reject();
         return ws;
+      }
+      ws.headers = function() {
+        if (!headers) {
+          headers = wrapMultiMap(jwebsocket.headers());
+        }
+        return headers;
       }
     }
     handler(ws);
@@ -277,13 +270,13 @@ http.createHttpClient = function() {
       };
       resp.headers = function() {
         if (!respHeaders) {
-          respHeaders = new org.vertx.java.platform.impl.ScriptableMap(jresp.headers());
+          respHeaders = wrapMultiMap(jresp.headers());
         }
         return respHeaders;
       };
       resp.trailers = function() {
         if (!respTrailers) {
-          respTrailers = new org.vertx.java.platform.impl.ScriptableMap(jresp.trailers());
+          respTrailers = wrapMultiMap(jresp.trailers());
         }
         return respTrailers;
       };
@@ -313,7 +306,7 @@ http.createHttpClient = function() {
     };
     req.headers = function() {
       if (!reqHeaders) {
-        reqHeaders = new org.vertx.java.platform.impl.ScriptableMap(jreq.headers());
+        reqHeaders = wrapMultiMap(jreq.headers());
       }
       return reqHeaders;
     };
@@ -542,6 +535,54 @@ http.RouteMatcher = function() {
   this._to_java_handler = function() {
     return j_rm;
   }
+}
+
+function wrapMultiMap(j_map) {
+  var map = {}
+  map.get = function(name) {
+    return j_map.get(name);
+  }
+
+  map.getAll = function(name) {
+    return j_map.getAll(name);
+  }
+
+  map.contains = function(name) {
+    return j_map.contains(name);
+  }
+
+  map.isEmpty = function() {
+    return j_map.isEmpty();
+  }
+
+  map.names = function() {
+    return j_map.names();
+  }
+
+  map.add = function(name, value) {
+    j_map.add(name, value);
+    return this;
+  }
+
+  map.set = function(name, value) {
+    j_map.set(name, value);
+    return this;
+  }
+
+  map.remove = function(name) {
+    j_map.remove(name);
+    return this;
+  }
+
+  map.clear = function() {
+    j_map.clear();
+    return this;
+  }
+
+  map.size = function() {
+    return j_map.size();
+  }
+  return map;
 }
 
 module.exports = http;
