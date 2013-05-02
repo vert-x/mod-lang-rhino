@@ -93,13 +93,6 @@ public class RhinoVerticleFactory implements VerticleFactory {
     return null;
   }
 
-  private void addStandardObjectsToScope(ScriptableObject scope) {
-    Object jsStdout = Context.javaToJS(System.out, scope);
-    ScriptableObject.putProperty(scope, "stdout", jsStdout);
-    Object jsStderr = Context.javaToJS(System.err, scope);
-    ScriptableObject.putProperty(scope, "stderr", jsStderr);
-  }
-
   private static synchronized CoffeeScriptCompiler getCoffeeScriptCompiler(ClassLoader cl) {
     // Lazy load coffee script compiler
     if (RhinoVerticleFactory.coffeeScriptCompiler == null) {
@@ -204,7 +197,6 @@ public class RhinoVerticleFactory implements VerticleFactory {
   private synchronized ScriptableObject getScope(Context cx) {
     if (scope == null) {
       scope = cx.initStandardObjects();
-      addStandardObjectsToScope(scope);
       scope.defineFunctionProperties(new String[]{"load"}, RhinoVerticleFactory.class, ScriptableObject.DONTENUM);
       Object jsVertx = Context.javaToJS(vertx, scope);
       ScriptableObject.putProperty(scope, "__jvertx", jsVertx);
