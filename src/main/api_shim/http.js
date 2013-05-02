@@ -569,6 +569,11 @@ function wrapMultiMap(j_map) {
     return this;
   }
 
+  map.setHeaders = function(headers) {
+    j_map.set(headers._jmap);
+    return this;
+  }
+
   map.remove = function(name) {
     j_map.remove(name);
     return this;
@@ -582,6 +587,8 @@ function wrapMultiMap(j_map) {
   map.size = function() {
     return j_map.size();
   }
+
+  map._jmap = j_map;
   return map;
 }
 
