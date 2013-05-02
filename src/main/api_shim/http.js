@@ -248,6 +248,9 @@ http.createHttpServer = function() {
     jserver.listen(port, host, handler);
     return server;
   }
+  server._to_java_server = function() {
+    return jserver;
+  }
   return server;
 }
 
