@@ -47,7 +47,6 @@ public class RhinoVerticleFactory implements VerticleFactory {
   private Vertx vertx;
   private Container container;
 
-  //private static ThreadLocal<ClassLoader> clThreadLocal = new ThreadLocal<>();
   private static CoffeeScriptCompiler coffeeScriptCompiler = null;
   private ScriptableObject scope;
 
@@ -171,26 +170,31 @@ public class RhinoVerticleFactory implements VerticleFactory {
     return require;
   }
 
-  private static void loadScript(ClassLoader cl, Context cx, Scriptable scope, String scriptName) throws Exception {
-    Reader reader;
-    if (scriptName != null && scriptName.endsWith(".coffee")) {
-      URL resource = cl.getResource(scriptName);
-      if (resource != null) {
-        reader = new StringReader(getCoffeeScriptCompiler(cl).coffeeScriptToJavaScript(resource.toURI()));
-      } else {
-        throw new FileNotFoundException("Cannot find script: " + scriptName);
-      }
-    } else {
-      InputStream is = cl.getResourceAsStream(scriptName);
-      if (is == null) {
-        throw new FileNotFoundException("Cannot find script: " + scriptName);
-      }
-      reader = new BufferedReader(new InputStreamReader(is));
-    }
-    cx.evaluateReader(scope, reader, scriptName, 1, null);
+  static void loadScript(ClassLoader cl, Context cx, Scriptable scope, String scriptName) throws Exception {
+    Reader reader = null;
     try {
-      reader.close();
-    } catch (IOException ignore) {
+      if (scriptName != null && scriptName.endsWith(".coffee")) {
+        URL resource = cl.getResource(scriptName);
+        if (resource != null) {
+          reader = new StringReader(getCoffeeScriptCompiler(cl).coffeeScriptToJavaScript(resource.toURI()));
+        } else {
+          throw new FileNotFoundException("Cannot find script: " + scriptName);
+        }
+      } else {
+        InputStream is = cl.getResourceAsStream(scriptName);
+        if (is == null) {
+          throw new FileNotFoundException("Cannot find script: " + scriptName);
+        }
+        reader = new BufferedReader(new InputStreamReader(is));
+      }
+      cx.evaluateReader(scope, reader, scriptName, 1, null);
+    } finally {
+      try {
+        if (reader != null) {
+          reader.close();
+        }
+      } catch (IOException ignore) {
+      }
     }
   }
 

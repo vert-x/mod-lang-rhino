@@ -18,7 +18,6 @@ package org.vertx.java.platform.impl;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaScriptException;
-import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.commonjs.module.provider.ModuleSource;
 
@@ -43,8 +42,7 @@ public class CoffeeScriptCompiler {
       Context context = Context.enter();
       try {
         globalScope = context.initStandardObjects();
-        Script coffeeCompiler = (Script) Class.forName("org.vertx.java.deploy.impl.rhino.coffee_script").newInstance();        
-        coffeeCompiler.exec(context, globalScope);
+        RhinoVerticleFactory.loadScript(classLoader, context, globalScope, "coffee-script.js");
       } finally {
         Context.exit();
       }
