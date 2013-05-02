@@ -33,6 +33,8 @@ import java.nio.file.Paths;
 
 /**
  * @author Scott Horn
+ *
+ * Must be synchronized since not threadsafe
  */
 public class CoffeeScriptCompiler {
   private final Scriptable globalScope;
@@ -51,14 +53,14 @@ public class CoffeeScriptCompiler {
     }
   }
 
-  public String coffeeScriptToJavaScript(URI coffeeScript) throws JavaScriptException,
+  public synchronized String coffeeScriptToJavaScript(URI coffeeScript) throws JavaScriptException,
       InvalidPathException, IOException, URISyntaxException {
     Path path = Paths.get(coffeeScript);
     String coffee = new String(Files.readAllBytes(path));
     return compile(coffee);
   }
 
-  public ModuleSource coffeeScriptToJavaScript(ModuleSource source) throws JavaScriptException, InvalidPathException, IOException, URISyntaxException {
+  public synchronized ModuleSource coffeeScriptToJavaScript(ModuleSource source) throws JavaScriptException, InvalidPathException, IOException, URISyntaxException {
     try (Reader reader = source.getReader()) {
       StringBuilder coffee = new StringBuilder();
       char[] buf = new char[4096];
@@ -71,7 +73,7 @@ public class CoffeeScriptCompiler {
     }
   }
 
-  public String compile(String coffeeScriptSource) throws JavaScriptException {
+  public synchronized String compile(String coffeeScriptSource) throws JavaScriptException {
     Context context = Context.enter();
     try {
       Scriptable compileScope = context.newObject(globalScope);
