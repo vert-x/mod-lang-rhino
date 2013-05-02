@@ -547,7 +547,8 @@ function wrapMultiMap(j_map) {
   }
 
   map.getAll = function(name) {
-    return j_map.getAll(name);
+    var n =  j_map.getAll(name);
+    return convertToArray(n);
   }
 
   map.contains = function(name) {
@@ -559,7 +560,8 @@ function wrapMultiMap(j_map) {
   }
 
   map.names = function() {
-    return j_map.names();
+    var n =  j_map.names();
+    return convertToArray(n);
   }
 
   map.add = function(name, value) {
@@ -593,6 +595,17 @@ function wrapMultiMap(j_map) {
 
   map._jmap = j_map;
   return map;
+}
+
+function convertToArray(j_col) {
+  var n = j_col.iterator();
+  var array = new Array();
+  var i = 0;
+
+  while (n.hasNext()) {
+    array[i++] = n.next();
+  }
+  return array;
 }
 
 module.exports = http;

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+var console = require("console");
+
 var tu = require('test_utils')
 var http = require('http')
 var Buffer = require("buffer")
@@ -285,6 +287,18 @@ function httpMethod(ssl, method, chunked) {
     }
     request.headers().add('header3', 'vheader3_1').add('header3', 'vheader3')
 
+    var size = request.headers().size()
+    var names = request.headers().names()
+    var names_count = 0
+    tu.azzert(size == names.length)
+
+    for (var i = 0; i < names.length; i++) {
+      names_count = names_count + 1
+      console.log(names[i])
+      //tu.azzert(request.headers().contains(k))
+    }
+
+    tu.azzert(size === names_count)
     request.write(sent_buff);
 
     request.end();
