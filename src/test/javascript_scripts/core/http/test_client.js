@@ -287,16 +287,16 @@ function httpMethod(ssl, method, chunked) {
     }
     request.headers().add('header3', 'vheader3_1').add('header3', 'vheader3')
 
-    var size = request.headers().size()
-    var names = request.headers().names()
+    var headers = request.headers();
+    var size = headers.size()
+    var names = headers.names()
     var names_count = 0
     tu.azzert(size == names.length)
 
-    for (var i = 0; i < names.length; i++) {
+    headers.forEach(function(k, v) {
+      tu.azzert(request.headers().contains(k))
       names_count = names_count + 1
-      console.log(names[i])
-      //tu.azzert(request.headers().contains(k))
-    }
+    })
 
     tu.azzert(size === names_count)
     request.write(sent_buff);

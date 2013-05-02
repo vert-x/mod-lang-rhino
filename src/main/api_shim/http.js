@@ -546,6 +546,14 @@ function wrapMultiMap(j_map) {
     return j_map.get(name);
   }
 
+  map.forEach = function(func) {
+    var names = j_map.names().iterator();
+    while (names.hasNext()) {
+      var name = names.next();
+      func(name, map.getAll(name));
+    }
+  }
+
   map.getAll = function(name) {
     var n =  j_map.getAll(name);
     return convertToArray(n);
