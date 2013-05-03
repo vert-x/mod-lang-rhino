@@ -557,7 +557,10 @@ function wrapMultiMap(j_map) {
     var names = j_map.names().iterator();
     while (names.hasNext()) {
       var name = names.next();
-      func(name, map.getAll(name));
+      var values = j_map.getAll(name).iterator();
+      while (values.hasNext()) {
+        func(name, values.next());
+      }
     }
   }
 
