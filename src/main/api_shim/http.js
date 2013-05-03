@@ -34,9 +34,16 @@ function wrappedRequestHandler(handler) {
 
     var reqHeaders = null;
     var reqParams = null;
+    var version = null;
 
     var req = {};
     readStream(req, jreq);
+    req.version = function() {
+      if (version === null) {
+        version = jreq.version().toString();
+      }
+      return version;
+    };
     req.method = function() {
       return jreq.method();
     };

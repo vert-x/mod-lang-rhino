@@ -191,6 +191,7 @@ function httpMethod(ssl, method, chunked) {
 
   server.requestHandler(function(req) {
     tu.checkThread()
+    tu.azzert(req.version() === 'HTTP_1_1');
     tu.azzert(req.uri() == uri);
     tu.azzert(req.method() === method);
     tu.azzert(req.path() === path);
