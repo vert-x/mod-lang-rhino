@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+var console = require('console')
 var tu = require('test_utils')
 var net = require('net')
 var Buffer = require('buffer')
@@ -26,6 +27,11 @@ function testConnect() {
 
   server.connectHandler(function(sock) {
     tu.checkThread();
+    tu.azzert(sock.localAddress().ipaddress != null)
+    tu.azzert(sock.localAddress().port > -1)
+    tu.azzert(sock.remoteAddress().ipaddress != null)
+    tu.azzert(sock.remoteAddress().port > -1)
+
     sock.dataHandler(function(data) {
       tu.checkThread();
       sock.write(data);
@@ -41,6 +47,10 @@ function testConnect() {
 
       tu.azzert(err === null);
       tu.azzert(sock != null);
+      tu.azzert(sock.localAddress().ipaddress != null)
+      tu.azzert(sock.localAddress().port > -1)
+      tu.azzert(sock.remoteAddress().ipaddress != null)
+      tu.azzert(sock.remoteAddress().port > -1)
 
       sock.dataHandler(function(data) {
         tu.testComplete();

@@ -142,8 +142,17 @@ function jsNetSocket(jNetSocket) {
     return netSocket;
   };
   netSocket.remoteAddress = function() {
-    return jNetSocket.remoteAddress();
+    return {
+      'ipaddress': jNetSocket.remoteAddress().getAddress().getHostAddress(),
+      'port': jNetSocket.remoteAddress().getPort()
+    };
   };
+  netSocket.localAddress = function() {
+    return {
+      'ipaddress': jNetSocket.localAddress().getAddress().getHostAddress(),
+      'port': jNetSocket.localAddress().getPort()
+    };
+  }
   netSocket.close = function() {
     jNetSocket.close();
   };
