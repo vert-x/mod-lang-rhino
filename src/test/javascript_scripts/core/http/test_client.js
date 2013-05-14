@@ -171,6 +171,92 @@ function testPATCHSSLChunked() {
   httpMethod(true, "PATCH", true)
 }
 
+function testFormFileUpload() {
+  var content = "Vert.x rocks!";
+  server.requestHandler(function(req) {
+    if (req.uri() === '/form') {
+      req.response.chunked(true);
+      req.uploadHandler(function(event) {
+        event.dataHandler(function(buffer) {
+          tu.azzert(content == buffer.toString());
+        });
+      });
+      req.endHandler(function() {
+        var attrs = req.formAttributes();
+        tu.azzert(attrs['name'] === "file");
+        tu.azzert(attrs['filename'] === "tmp-0.txt");
+        tu.azzert(attrs['Content-Type'] === "image/gif");
+        req.response.end();
+      });
+    }
+  });
+  server.listen(8080, "0.0.0.0", function(err, serv) {
+    tu.azzert(err === null);
+    client.port(8080);
+    var req = client.post("/form", function(resp) {
+      // assert the response
+      tu.azzert(200 === resp.statusCode());
+      resp.bodyHandler(function(body) {
+        tu.azzert(0 === body.length());
+      });
+    tu.testComplete();
+    });
+
+    var boundary = "dLV9Wyq26L_-JQxk6ferf-RT153LhOO";
+    var buffer = new Buffer();
+    var b =
+        "--" + boundary + "\r\n" +
+        "Content-Disposition: form-data; name=\"file\"; filename=\"tmp-0.txt\"\r\n" +
+        "Content-Type: image/gif\r\n" +
+        "\r\n" +
+        content + "\r\n" +
+        "--" + boundary + "--\r\n";
+
+    buffer.appendString(b);
+    req.headers().set("content-length", '' + buffer.length());
+    req.headers().set("content-type", "multipart/form-data; boundary=" + boundary);
+    req.write(buffer).end();
+  });
+}
+
+function testFormUploadAttributes() {
+    var content = "Vert.x rocks!";
+    server.requestHandler(function(req) {
+        if (req.uri() === '/form') {
+            req.response.chunked(true);
+            req.uploadHandler(function(event) {
+                event.dataHandler(function(buffer) {
+                    tu.azzert(false);
+                });
+            });
+            req.endHandler(function() {
+                var attrs = req.formAttributes();
+                tu.azzert(attrs['framework'] === "vertx");
+                tu.azzert(attrs['runson'] === "jvm");
+                req.response.end();
+            });
+        }
+    });
+    server.listen(8080, "0.0.0.0", function(err, serv) {
+        tu.azzert(err === null);
+        client.port(8080);
+        var req = client.post("/form", function(resp) {
+            // assert the response
+            tu.azzert(200 === resp.statusCode());
+            resp.bodyHandler(function(body) {
+                tu.azzert(0 === body.length());
+            });
+            tu.testComplete();
+        });
+
+        var buffer = new Buffer();
+        buffer.appendString("framework=vertx&runson=jvm");
+        req.headers().set("content-length", '' + buffer.length());
+        req.headers().set("content-type", "application/x-www-form-urlencoded");
+        req.write(buffer).end();
+    });
+}
+
 function httpMethod(ssl, method, chunked) {
 
   if (ssl) {

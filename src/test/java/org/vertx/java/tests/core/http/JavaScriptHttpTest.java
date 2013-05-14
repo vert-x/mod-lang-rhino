@@ -180,4 +180,11 @@ public class JavaScriptHttpTest extends TestBase {
     startTest(getMethodName());
   }
 
+  public void testFormFileUpload() {
+    startTest(getMethodName());
+  }
+
+  public void testFormUploadAttributes() {
+    startTest(getMethodName());
+  }
 }

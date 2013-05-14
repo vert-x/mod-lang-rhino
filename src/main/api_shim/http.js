@@ -35,6 +35,7 @@ function wrappedRequestHandler(handler) {
     var reqHeaders = null;
     var reqParams = null;
     var version = null;
+    var reqFormAttrs = null;
 
     var req = {};
     readStream(req, jreq);
@@ -77,6 +78,18 @@ function wrappedRequestHandler(handler) {
     req.absoluteURI = function() {
       return jreq.absoluteURI();
     };
+    req.formAttributes = function() {
+      if (reqFormAttrs == null) {
+        reqFormAttrs = new org.vertx.java.platform.impl.ScriptableMap(jreq.formAttributes());
+      }
+      return reqFormAttrs;
+    }
+    req.uploadHandler = function(handler) {
+      if (handler) {
+        jreq.uploadHandler(wrapUploadHandler(handler));
+      }
+      return req;
+    }
     req.bodyHandler = function(handler) {
       jreq.bodyHandler(handler);
       return req;
@@ -165,6 +178,35 @@ function wrappedRequestHandler(handler) {
   }
 }
 
+function wrapUploadHandler(handler) {
+  return function(jupload) {
+    var upload = {};
+    readStream(upload, jupload);
+    upload.streamToFileSystem = function(filename) {
+      jupload.streamToFileSystem(filename);
+      return upload;
+    };
+    upload.filename = function() {
+      return jupload.filename();
+    };
+    upload.name = function() {
+      return jupload.name();
+    };
+    upload.contentType = function() {
+      return jupload.contentType();
+    };
+    upload.contentTransferEncoding = function() {
+      return jupload.contentTransferEncoding();
+    }
+    upload.charset = function() {
+      return jupload.charset().toString();
+    }
+    upload.size = function() {
+      return jupload.size();
+    }
+    handler(upload);
+  }
+}
 function wrapWebsocketHandler(server, handler) {
   return function(jwebsocket) {
     var ws = {};
