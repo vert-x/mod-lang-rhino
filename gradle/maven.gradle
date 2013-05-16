@@ -83,6 +83,7 @@ uploadArchives {
 
 def configurePom(def pom) {
 	pom.project {
+    name rootProject.name
 		description 'Vert.x module that provides JavaScript support using Rhino'
 		inceptionYear '2013'
 		packaging 'jar'
@@ -92,7 +93,6 @@ def configurePom(def pom) {
             developer {
                 id 'purplefox'
                 name 'Tim Fox'
-               // email 'tim@tfox.org'
             }
         }
 
