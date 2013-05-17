@@ -183,9 +183,9 @@ function testFormFileUpload() {
       });
       req.endHandler(function() {
         var attrs = req.formAttributes();
-        tu.azzert(attrs['name'] === "file");
-        tu.azzert(attrs['filename'] === "tmp-0.txt");
-        tu.azzert(attrs['Content-Type'] === "image/gif");
+        tu.azzert(attrs.get('name') === "file");
+        tu.azzert(attrs.get('filename') === "tmp-0.txt");
+        tu.azzert(attrs.get('Content-Type') === "image/gif");
         req.response.end();
       });
     }
@@ -231,8 +231,8 @@ function testFormUploadAttributes() {
             });
             req.endHandler(function() {
                 var attrs = req.formAttributes();
-                tu.azzert(attrs['framework'] === "vertx");
-                tu.azzert(attrs['runson'] === "jvm");
+                tu.azzert(attrs.get('framework') === "vertx");
+                tu.azzert(attrs.get('runson') === "jvm");
                 req.response.end();
             });
         }

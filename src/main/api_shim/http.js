@@ -79,8 +79,8 @@ function wrappedRequestHandler(handler) {
       return jreq.absoluteURI();
     };
     req.formAttributes = function() {
-      if (reqFormAttrs == null) {
-        reqFormAttrs = new org.vertx.java.platform.impl.ScriptableMap(jreq.formAttributes());
+      if (!reqFormAttrs) {
+        reqFormAttrs =  wrapMultiMap(jreq.formAttributes());
       }
       return reqFormAttrs;
     }
