@@ -222,6 +222,7 @@ function testFormFileUpload() {
 function testFormUploadAttributes() {
     var content = "Vert.x rocks!";
     server.requestHandler(function(req) {
+
         if (req.uri() === '/form') {
             req.response.chunked(true);
             req.uploadHandler(function(event) {

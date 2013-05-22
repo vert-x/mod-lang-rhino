@@ -168,8 +168,12 @@ function wrappedRequestHandler(handler) {
         jresp.end();
       }
     };
-    resp.sendFile = function(fileName) {
-      jresp.sendFile(fileName);
+    resp.sendFile = function(fileName, notFoundFile) {
+      if (notFoundFile === undefined) {
+        jresp.sendFile(fileName);
+      } else {
+        jresp.sendFile(fileName, notFoundFile);
+      }
       return resp;
     };
 
