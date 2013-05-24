@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-var console = require('console')
+var console = require('vertx/console')
 var tu = require('test_utils')
-var net = require('net')
-var Buffer = require('buffer')
+var net = require('vertx/net')
+var Buffer = require('vertx/buffer')
 
 var client;
 

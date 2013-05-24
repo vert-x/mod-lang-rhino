@@ -15,9 +15,9 @@
  */
 
 var tu = require('test_utils')
-var eb = require("event_bus");
-var timers = require("timer");
-var Buffer = require("buffer");
+var eb = require("vertx/event_bus");
+var timers = require("vertx/timer");
+var Buffer = require("vertx/buffer");
 var address = 'foo-address';
 
 var sent = {

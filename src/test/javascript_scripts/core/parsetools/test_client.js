@@ -15,8 +15,8 @@
  */
 
 var tu = require('test_utils')
-var Buffer = require('buffer')
-var parseTools = require('parse_tools')
+var Buffer = require('vertx/buffer')
+var parseTools = require('vertx/parse_tools')
 
 function testDelimited() {
 

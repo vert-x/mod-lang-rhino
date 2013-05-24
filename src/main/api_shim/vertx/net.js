@@ -20,12 +20,12 @@ if (typeof __vertxload === 'string') {
 
 var net = {};
 
-load("convert_handler.js");
-load("ssl_support.js");
-load("tcp_support.js");
-load("read_stream.js");
-load("write_stream.js");
-load("args.js");
+load("vertx/convert_handler.js");
+load("vertx/ssl_support.js");
+load("vertx/tcp_support.js");
+load("vertx/read_stream.js");
+load("vertx/write_stream.js");
+load("vertx/args.js");
 
 net.createNetServer = function() {
   var jserver = __jvertx.createNetServer();

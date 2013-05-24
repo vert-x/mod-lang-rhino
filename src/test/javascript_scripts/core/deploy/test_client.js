@@ -15,7 +15,7 @@
  */
 
 var tu = require('test_utils')
-var container = require('container')
+var container = require('vertx/container')
 
 function testDeploy1() {
   container.deployVerticle("core/deploy/child.js", function(err, deployID) {

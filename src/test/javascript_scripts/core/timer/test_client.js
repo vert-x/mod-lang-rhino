@@ -15,7 +15,7 @@
  */
 
 var tu = require('test_utils')
-var timers = require('timer')
+var timers = require('vertx/timer')
 
 function testOneOff() {
   var count = 0;
