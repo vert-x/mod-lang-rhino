@@ -16,7 +16,7 @@
 
 var tu = require('test_utils')
 var f = require("core/scriptloading/mod")
-var console = require("console")
+var console = require("vertx/console")
 
 function testLoadInCommonJSModuleDoesntPolluteGlobal() {
   tu.azzert(f() == "blah");

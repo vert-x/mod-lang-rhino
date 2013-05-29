@@ -20,12 +20,12 @@ if (typeof __vertxload === 'string') {
 
 var http = {};
 
-load("read_stream.js");
-load("write_stream.js");
-load("ssl_support.js");
-load("tcp_support.js");
-load("args.js");
-load("convert_handler.js");
+load("vertx/read_stream.js");
+load("vertx/write_stream.js");
+load("vertx/ssl_support.js");
+load("vertx/tcp_support.js");
+load("vertx/args.js");
+load("vertx/convert_handler.js");
 
 function wrappedRequestHandler(handler) {
   return function(jreq) {

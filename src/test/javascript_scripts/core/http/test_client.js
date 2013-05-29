@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-var console = require("console");
+var console = require("vertx/console");
 
 var tu = require('test_utils')
-var http = require('http')
-var Buffer = require("buffer")
+var http = require('vertx/http')
+var Buffer = require("vertx/buffer")
 
 var server = http.createHttpServer();
 var client = http.createHttpClient().port(8080);

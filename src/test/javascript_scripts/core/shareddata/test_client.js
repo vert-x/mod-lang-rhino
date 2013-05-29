@@ -15,7 +15,7 @@
  */
 
 var tu = require('test_utils')
-var sharedData = require('shared_data')
+var sharedData = require('vertx/shared_data')
 
 function testMap() {
   var map1 = sharedData.getMap("foo");

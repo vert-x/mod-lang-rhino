@@ -24,8 +24,8 @@ var VERTICLE = 0;
 var WORKER = 1;
 var MODULE = 2;
 
-load("convert_handler.js");
-load("args.js");
+load("vertx/convert_handler.js");
+load("vertx/args.js");
 
 function deploy(deployType, name, args) {
   var doneHandler = getArgValue('function', args);

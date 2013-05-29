@@ -15,8 +15,8 @@
  */
 
 var tu = require('test_utils')
-var fs = require("file_system")
-var Pump = require("pump")
+var fs = require("vertx/file_system")
+var Pump = require("vertx/pump")
 
 var fileDir = "js-test-output"
 

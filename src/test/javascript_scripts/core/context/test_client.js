@@ -15,7 +15,7 @@
  */
 
 var tu = require('test_utils')
-var vertx = require('vertx.js')
+var vertx = require('vertx')
 
 function testRunOnContext() {
   vertx.runOnContext(function() {
