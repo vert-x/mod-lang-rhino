@@ -15,7 +15,7 @@
  */
 
 var tu = require('test_utils')
-var http = require('http')
+var http = require('vertx/http')
 
 var server = http.createHttpServer();
 var rm = new http.RouteMatcher();

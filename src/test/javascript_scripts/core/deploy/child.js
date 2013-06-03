@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var console = require("console");
+var console = require("vertx/console");
 
 console.log("in child.js");
 

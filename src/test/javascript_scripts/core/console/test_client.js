@@ -15,7 +15,7 @@
  */
 
 var tu = require('test_utils')
-var console = require('console')
+var console = require('vertx/console')
 
 function testConsole() {
   tu.azzert(typeof console.log === 'function');
