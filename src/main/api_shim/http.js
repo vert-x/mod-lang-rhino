@@ -358,6 +358,7 @@ http.createHttpClient = function() {
         return jreq.isChunked();
       } else {
         jreq.setChunked(ch);
+        return req;
       }
     };
     req.headers = function() {
