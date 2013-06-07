@@ -4,7 +4,7 @@ if (typeof __vertxload === 'string') {
 
 var vertxTests = {};
 
-var container = require("container");
+var container = require("vertx/container");
 var vassert = require("vertx_assert");
 
 vertxTests.startTests = function (top) {
