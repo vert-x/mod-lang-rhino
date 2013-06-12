@@ -18,18 +18,39 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load the Vert.x API"
 }
 
-var timers = {};
+var timers = {
 
-timers.setTimer = function(delay, handler) {
-  return __jvertx.setTimer(delay, handler);
-}
+  /**
+   * Sets a one-shot timer that will fire after a certain delay.
+   *
+   * @param delay the delay, in milliseconds
+   * @param handler an handler that will be called when the timer fires
+   * @returns {number} the unique id of the timer
+   */
+  setTimer : function(delay, handler) {
+    return __jvertx.setTimer(delay, handler);
+  },
 
-timers.setPeriodic = function(interval, handler) {
-  return __jvertx.setPeriodic(interval, handler);
-}
+  /**
+   * Set a periodic timer.
+   *
+   * @param interval: the period of the timer, in milliseconds
+   * @param handler: an handler that will be called each time the timer fires
+   * @returns {number} the unique id of the timer
+   */
+  setPeriodic : function(interval, handler) {
+    return __jvertx.setPeriodic(interval, handler);
+  },
 
-timers.cancelTimer = function(id) {
-  __jvertx.cancelTimer(id);
-}
+  /**
+   * Cancels a timer.
+   *
+   * @param id: the id of the timer, as returned from set_timer or set_periodic
+   * @returns {boolean} true if the timer was cancelled, false if it wasn't found.
+   */
+  cancelTimer : function(id) {
+    return __jvertx.cancelTimer(id);
+  }
+};
 
 module.exports = timers;

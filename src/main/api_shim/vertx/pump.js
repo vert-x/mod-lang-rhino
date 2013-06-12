@@ -18,6 +18,24 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load the Vert.x API"
 }
 
+/**
+ * Pumps data from a ReadStream to a WriteStream and performs flow control where necessary to
+ * prevent the write stream from getting overloaded.
+ *
+ * Instances of this class read bytes from a ReadStream and write them to a WriteStream. If data
+ * can be read faster than it can be written this could result in the write queue of the WriteStream growing
+ * without bound, eventually causing it to exhaust all available RAM.
+ * To prevent this, after each write, instances of this class check whether the write queue of the WriteStream
+ * is full, and if so, the ReadStream is paused, and a WriteStreamdrain_handler is set on the WriteStream.
+ * When the WriteStream has processed half of its backlog, the drain_handler will be called,
+ * which results in the pump resuming the ReadStream.
+ *
+ *
+ * @param rs
+ * @param ws
+ * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+ * @constructor
+ */
 var Pump = function(rs, ws) {
 
   var pumped = 0;
@@ -36,18 +54,41 @@ var Pump = function(rs, ws) {
   }
 
   var p = {
+    /**
+     * Start the Pump. The Pump can be started and stopped multiple times
+     *
+     * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+     */
     start: function() {
       rs.dataHandler(dataHandler);
       return p;
     },
+    /**
+     * Stop the Pump. The Pump can be started and stopped multiple times
+     *
+     * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+     */
     stop: function() {
       ws.drainHandler(null);
       rs.dataHandler(null);
       return p;
     },
+
+    /**
+     * Return the total number of bytes pumped by this pump
+     *
+     * @returns {number}
+     */
     getBytesPumped: function() {
       return pumped;
     },
+
+    /**
+     * Set the write queue max size
+     *
+     * @param maxSize The write queue max size
+     * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+     */
     setWriteQueueMaxSize: function(maxSize) {
       ws.setWriteQueueMaxSize(maxSize);
       return p;

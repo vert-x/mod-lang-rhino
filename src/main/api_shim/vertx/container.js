@@ -27,6 +27,7 @@ var MODULE = 2;
 load("vertx/convert_handler.js");
 load("vertx/args.js");
 
+
 function deploy(deployType, name, args) {
   var doneHandler = getArgValue('function', args);
   var multiThreaded = getArgValue('boolean', args);
@@ -63,42 +64,70 @@ function deploy(deployType, name, args) {
   }
 }
 
+/**
+ * Deploy a verticle. The actual deploy happens asynchronously
+ * @param main the main of the verticle to deploy
+ */
 container.deployVerticle = function(main) {
   var args = Array.prototype.slice.call(arguments);
   args.shift();
   deploy(VERTICLE, main, args);
 }
 
+/**
+ * Deploy a worker verticle. The actual deploy happens asynchronously
+ *
+ * @param main the main of the verticle to deploy
+ */
 container.deployWorkerVerticle = function(main) {
   var args = Array.prototype.slice.call(arguments);
   args.shift();
   deploy(WORKER, main, args);
 }
 
+/**
+ * Deploy a module. The actual deploy happens asynchronously
+ *
+ * @param moduleMame The name of the module to deploy
+ */
 container.deployModule = function(moduleName) {
   var args = Array.prototype.slice.call(arguments);
   args.shift();
   deploy(MODULE, moduleName, args);
 }
 
-container.undeployVerticle = function(name, doneHandler) {
+/**
+ * Undeploy a verticle
+ *
+ * @param id the unique id of the deployment
+ * @param handler an handler that will be called when undeploy has completed
+ */
+container.undeployVerticle = function(id, doneHandler) {
   if (doneHandler) {
     doneHandler = adaptAsyncResultHandler(doneHandler);
   } else {
     doneHandler = null;
   }
-  __jcontainer.undeployVerticle(name, doneHandler);
+  __jcontainer.undeployVerticle(id, doneHandler);
 }
 
-container.undeployModule = function(name, doneHandler) {
+/**
+ * Undeploy a module
+ *
+ * @param id the unique id of the module
+ * @param handler an handler that will be called when undeploy has completed
+ */
+container.undeployModule = function(id, doneHandler) {
   if (doneHandler) {
     doneHandler = adaptAsyncResultHandler(doneHandler);
   } else {
     doneHandler = null;
   }
-  __jcontainer.undeployModule(name, doneHandler);
+  __jcontainer.undeployModule(id, doneHandler);
 }
-
+/**
+ * Cause the container to exit
+ */
 container.exit = function() {
   __jcontainer.exit();
 }

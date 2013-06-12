@@ -39,9 +39,16 @@ addProps(require('vertx/parse_tools'));
 addProps(require('vertx/shared_data'));
 vertx.fileSystem = require('vertx/file_system');
 
-vertx.runOnContext = function(task) {
-  __jvertx.runOnContext(task);
+/**
+ * Put the handler on the event queue for this loop so it will be run asynchronously
+ * ASAP after this event has been processed
+ *
+ * @param {function} handler The desired diameter of the circle.
+ */
+vertx.runOnContext = function(handler) {
+  __jvertx.runOnContext(handler);
 }
+
 
 vertx.currentContext = function() {
   return __jvertx.currentContext();

@@ -20,6 +20,12 @@ if (typeof __vertxload === 'string') {
 
 var sockJS = {};
 
+/**
+ * Create a new sockjsServer
+ *
+ * @param httpServer
+ * @returns {{installApp: Function, setEventBusBridgeListener: Function, bridge: Function}}
+ */
 sockJS.createSockJSServer = function(httpServer) {
 
   if (typeof httpServer._to_java_server !== 'function') {
@@ -41,7 +47,41 @@ sockJS.createSockJSServer = function(httpServer) {
     return json_arr;
   }
 
+  /**
+   * This is an implementation of the server side part of https://github.com/sockjs
+   *
+   * SockJS enables browsers to communicate with the server using a simple WebSocket-like api for sending
+   * and receiving messages. Under the bonnet SockJS chooses to use one of several protocols depending on browser
+   * capabilities and what apppears to be working across the network.
+   *
+   * Available protocols include:
+   *
+   * WebSockets
+   * xhr-polling
+   * xhr-streaming
+   * json-polling
+   * event-source
+   * html-file
+   *
+   * This means, it should just work irrespective of what browser is being used, and whether there are nasty
+   * things like proxies and load balancers between the client and the server.
+   *
+   * For more detailed information on SockJS, see their website.
+   *
+   * On the server side, you interact using instances of SockJSSocket - this allows you to send data to the
+   * client or receive data via the ReadStream data_handler.
+   *
+   * You can register multiple applications with the same SockJSServer, each using different path prefixes, each
+   * application will have its own handler, and configuration is described in a Hash.
+   * @type {{installApp: Function, setEventBusBridgeListener: Function, bridge: Function}}
+   */
   var server = {
+    /**
+     * Install an application
+     *
+     * @param config Tconfiguration for the application
+     * @param handler The handler
+     */
     installApp: function(config, handler) {
       jserver.installApp(new org.vertx.java.core.json.JsonObject(JSON.stringify(config)), handler);
     },
