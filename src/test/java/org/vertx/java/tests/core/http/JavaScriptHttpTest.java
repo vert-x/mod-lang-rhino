@@ -187,4 +187,5 @@ public class JavaScriptHttpTest extends TestBase {
   public void testFormUploadAttributes() {
     startTest(getMethodName());
   }
+
 }

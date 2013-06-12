@@ -144,6 +144,30 @@ function route(method, regex, pattern, params, uri) {
   });
 }
 
+function testInterceptAll() {
+  var count = 0
+  var handler = function(req) {
+    tu.azzert(++count == 1)
+    // Now call the request handler of the routematcher
+    rm.call(req);
+  }
+
+  server.requestHandler(handler);
+
+  rm.get("/:name/:version", function(req) {
+    tu.azzert(++count == 2)
+    req.response.end();
+  });
+
+  server.listen(8080, '0.0.0.0', function(serv) {
+    client.get("/foo/bar", function(resp) {
+      tu.azzert(200 == resp.statusCode())
+      tu.testComplete();
+    }).end();
+  });
+
+}
+
 tu.registerTests(this);
 tu.appReady();
 

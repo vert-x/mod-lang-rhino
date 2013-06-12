@@ -93,7 +93,10 @@ function wrappedRequestHandler(handler) {
     req.bodyHandler = function(handler) {
       jreq.bodyHandler(handler);
       return req;
-    };
+    }
+    req._to_java_request = function() {
+      return jreq;
+    }
 
     var jresp = jreq.response();
     var respHeaders = null;
@@ -504,6 +507,10 @@ http.createHttpClient = function() {
 http.RouteMatcher = function() {
 
   var j_rm = new org.vertx.java.core.http.RouteMatcher();
+
+  this.call = function(req) {
+    j_rm.handle(req._to_java_request())
+  }
 
   this.get = function(pattern, handler) {
     j_rm.get(pattern, wrappedRequestHandler(handler));

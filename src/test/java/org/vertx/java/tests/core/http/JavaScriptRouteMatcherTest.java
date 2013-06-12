@@ -117,6 +117,10 @@ public class JavaScriptRouteMatcherTest extends TestBase {
   public void testRouteNoMatch() {
     startTest(getMethodName());
   }
+
+  public void testInterceptAll() {
+    startTest(getMethodName());
+  }
   
   
 }
