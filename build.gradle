@@ -38,13 +38,13 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.eriwen:gradle-js-plugin:1.5.0'
+    classpath 'com.eriwen:gradle-js-plugin:1.5.1'
   }
 }
 javascript.source {
   custom {
     js {
-      srcDir "src/main/api_shim"
+      srcDir "${projectDir}/src/main/api_shim/"
       include "*.js"
     }
   }
