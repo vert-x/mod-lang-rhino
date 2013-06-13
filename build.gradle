@@ -19,6 +19,7 @@ apply from: "gradle/maven.gradle"
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'js'
 
 group = modowner
 archivesBaseName = modname
@@ -31,6 +32,28 @@ targetCompatibility = '1.7'
 // We don't produce a jar
 jar.enabled = false
 assert configurations.archives.artifacts.removeAll { it.file == jar.archivePath }
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.eriwen:gradle-js-plugin:1.5.0'
+  }
+}
+javascript.source {
+  custom {
+    js {
+      srcDir "src/main/api_shim"
+      include "*.js"
+    }
+  }
+}
+
+task jsdocz(type: com.eriwen.gradle.js.tasks.JsDocTask) {
+  source = javascript.source.custom.js.files
+  destinationDir = "${buildDir}/jsdoc"
+}
 
 configurations {
   provided
