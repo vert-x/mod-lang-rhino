@@ -19,7 +19,6 @@ apply from: "gradle/maven.gradle"
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'js'
 
 group = modowner
 archivesBaseName = modname
@@ -40,19 +39,6 @@ buildscript {
   dependencies {
     classpath 'com.eriwen:gradle-js-plugin:1.5.1'
   }
-}
-javascript.source {
-  custom {
-    js {
-      srcDir "${projectDir}/src/main/api_shim/"
-      include "*.js"
-    }
-  }
-}
-
-task jsdocz(type: com.eriwen.gradle.js.tasks.JsDocTask) {
-  source = javascript.source.custom.js.files
-  destinationDir = "${buildDir}/jsdoc"
 }
 
 configurations {
@@ -167,6 +153,13 @@ task collectDeps(type: Copy) {
   into("test") {
     from configurations.testCompile
   }
+}
+
+task jsdoc(type: Exec) {
+  ignoreExitValue false
+  workingDir = project.projectDir
+
+  commandLine "./jsdoc-master/jsdoc -r -d $projectDir/build/docs $projectDir/src/main/api_shim"
 }
 
 // Map the 'provided' dependency configuration to the appropriate IDEA visibility scopes.
