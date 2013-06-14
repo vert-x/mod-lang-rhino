@@ -18,6 +18,11 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load the Vert.x API"
 }
 
+/**
+ * The 'vertx/http' module provides HTTP functions
+ * @exports vertx/http
+ */
+
 var http = {};
 
 load("vertx/read_stream.js");
@@ -512,7 +517,8 @@ function wrapWebsocketHandler(server, handler) {
 /**
  * Return a HttpServer
  *
- * @return server
+ * @desc Create and return an HttpServer object
+ * @return {{}}
  */
 http.createHttpServer = function() {
 
