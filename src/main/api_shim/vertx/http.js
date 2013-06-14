@@ -19,8 +19,9 @@ if (typeof __vertxload === 'string') {
 }
 
 /**
- * The 'vertx/http' module provides HTTP functions
- * @exports vertx/http
+ * The http module provides HTTP functions. 
+ *
+ * @exports http
  */
 var http = {};
 
@@ -31,382 +32,357 @@ load("vertx/tcp_support.js");
 load("vertx/args.js");
 load("vertx/convert_handler.js");
 
+/**
+ * Represents a server-side HttpServerRequest object. This object is created internally
+ * by vert.x and passed as a parameter to a request listener.
+ *
+ * @example
+ * var http    = require('vertx/http');
+ * var console = require('vertx/console');
+ *
+ * var server = http.createHttpServer();
+ * server.requestHandler(function(request) {
+ *
+ *   // Get headers from the HttpServerRequest object
+ *   // and write them to the console
+ *   for (var k in request.headers()) {
+ *     console.log(k + ": " + headers[k]);
+ *   }
+ * 
+ *   request.response.end(str);
+ * 
+ * }).listen(8080, 'localhost');
+ *
+ * @class 
+ */
+http.HttpServerRequest = function(jreq) {
+  var reqHeaders   = null;
+  var reqParams    = null;
+  var version      = null;
+  var reqFormAttrs = null;
+  var that         = this;
+
+  /**
+   * TODO: Figure out how to make this JSDoc able
+   */
+  readStream(this, jreq);
+
+  /**
+   * The HTTP version - either HTTP_1_0 or HTTP_1_1
+   *
+   * @returns {string} version
+   */
+  this.version = function() {
+    if (version === null) {
+      version = jreq.version().toString();
+    }
+    return version;
+  }
+
+  /**
+   * The HTTP method, one of HEAD, OPTIONS, GET, POST, PUT, DELETE, CONNECT, TRACE
+   *
+   * @returns {string} method
+   */
+  this.method = function() {
+    return jreq.method();
+  }
+
+  /**
+   * The uri of the request. For example 'http://www.somedomain.com/somepath/somemorepath/somresource.foo?someparam=32&someotherparam=x
+   *
+   * @returns {string} uri
+   */
+  this.uri = function() {
+    return jreq.uri();
+  }
+
+  /**
+   * The path part of the uri. For example /somepath/somemorepath/somresource.foo
+   *
+   * @returns {string} path
+   */
+  this.path = function() {
+    return jreq.path();
+  }
+
+  /**
+   * The query part of the uri. For example someparam=32&someotherparam=x
+   *
+   * @returns {string} query
+   */
+  this.query = function() {
+    return jreq.query();
+  }
+
+  /**
+   * The headers of the request.
+   *
+   * @returns {wrapMultiMap}
+   */
+  this.headers = function() {
+    if (!reqHeaders) {
+      reqHeaders = wrapMultiMap(jreq.headers());
+    }
+    return reqHeaders;
+  }
+
+  /**
+   * Return the remote (client side) address of the request
+   *
+   * @returns {wrapMultiMap}
+   */
+  this.params = function() {
+    if (!reqParams) {
+      reqParams = wrapMultiMap(jreq.params());
+    }
+    return reqParams;
+  }
+
+  /**
+   * Get the address of the remote peer as a Java InetSocketAddress object
+   *
+   * @return InetSocketAddress
+   */
+  this.remoteAddress = function() {
+    return jreq.remoteAddress();
+  }
+
+  /**
+   * Get an array of Java X509Certificate objects
+   *
+   * @return {Array} Array of Java X509Certificate objects
+   */
+  this.peerCertificateChain = function() {
+    return jreq.peerCertificateChain();
+  }
+
+  /**
+   * Return the absolute URI corresponding to the the HTTP request
+   *
+   * @returns {string} absoluteURI
+   */
+  this.absoluteURI = function() {
+    return jreq.absoluteURI();
+  }
+
+  /**
+   * Return a form attributes object
+   *
+   * @returns {{}} The form attributes
+   */
+  this.formAttributes = function() {
+    if (!reqFormAttrs) {
+      reqFormAttrs =  wrapMultiMap(jreq.formAttributes());
+    }
+    return reqFormAttrs;
+  }
+
+  /**
+   * Set the upload handler. The handler will get notified once a new file
+   * upload was received and so allow to get notified by the upload in
+   * progress.
+   *
+   * @param handler The handler to call
+   * @returns {HttpServerRequest} this
+   */
+  this.uploadHandler = function(handler) {
+    if (handler) {
+      jreq.uploadHandler(wrapUploadHandler(handler));
+    }
+    return that;
+  }
+
+  /**
+   *  Set the body handler for this request, the handler receives a single
+   *  Buffer object as a parameter.  This can be used as a decorator.
+   *
+   * @param handler The handler to call once the body was received
+   * @returns {HttpServerRequest} this
+   */
+  this.bodyHandler = function(handler) {
+    jreq.bodyHandler(handler);
+    return that;
+  }
+
+  var jresp = jreq.response();
+  var resp = new http.HttpServerResponse(jresp);
+
+  /**
+   * @property HttpResponse response
+   */
+  that.response = resp;
+
+  /**
+   * @private
+   */
+  this._to_java_request = function() {
+    return jreq;
+  }
+}
+
+/**
+ * A server-side response
+ * @class
+ */
+http.HttpServerResponse = function(jresp) {
+  var that = this;
+  var respHeaders = null;
+  var respTrailers = null;
+
+  /**
+   * Get or set HTTP status code of the response.
+   */
+  this.statusCode = function(code) {
+    if (code) {
+      jresp.setStatusCode(code);
+      return that;
+    } else {
+      return jresp.getStatusCode();
+    }
+  }
+
+  /**
+   * Get or set HTTP status message of the response.
+   */
+  this.statusMessage = function(msg) {
+    if (msg) {
+      jresp.setStatusMessage(msg);
+      return that;
+    } else {
+      return jresp.getStatusMessage();
+    }
+  }
+
+  /**
+   * Get or set if the response is chunked
+   */
+  this.chunked = function(ch) {
+    if (ch) {
+      jresp.setChunked(ch);
+      return that;
+    } else {
+      return jresp.isChunked();
+    }
+  }
+
+  /**
+   * Return the http headers of the response
+   */
+  this.headers = function() {
+    if (!respHeaders) {
+      respHeaders = wrapMultiMap(jresp.headers());
+    }
+    return respHeaders;
+  }
+
+  /**
+   * Put a header on the response.
+   *
+   * @param k The name under which the header should be stored
+   * @param v T the value of the header
+   * @returns {HttpServerResponse}
+   */
+  this.putHeader = function(k, v) {
+    jresp.putHeader(k, v);
+    return that;
+  }
+
+  /**
+   * Return the trailing headers of the response
+   *
+   * @memberof HttpResponse
+   * @instance
+   * @returns {respTrailers}
+   */
+  this.trailers = function() {
+    if (!respTrailers) {
+      respTrailers = wrapMultiMap(jresp.trailers());
+    }
+    return respTrailers;
+  }
+
+  /**
+   * Put a trailing header
+   *
+   * @param k The name under which the header should be stored
+   * @param v T the value of the header
+   * @returns {resp}
+   */
+  this.putTrailer = function(k, v) {
+    jresp.putTrailer(k, v);
+    return that;
+  }
+
+  /**
+   * Write content to the response
+   *
+   * @param arg0
+   * @param arg1
+   * @returns {{}}
+   */
+  this.write = function(arg0, arg1) {
+    if (arg1 === undefined) {
+      jresp.write(arg0);
+    } else {
+      jresp.write(arg0, arg1);
+    }
+    return that;
+  }
+
+  /**
+   * Forces the head of the request to be written before end is called on the
+   * request. This is normally used to implement HTTP 100-continue handling,
+   * see continue_handler for more information.
+   *
+   * @memberof HttpResponse
+   * @instance
+   * @returns {resp}
+   */
+  this.sendHead = function() {
+    jresp.sendHead();
+    return that;
+  }
+
+  this.end = function(arg0, arg1) {
+    if (arg0) {
+      if (arg1) {
+        jresp.end(arg0, arg1);
+      } else {
+        jresp.end(arg0);
+      }
+    } else {
+      jresp.end();
+    }
+  }
+
+  /**
+   * Tell the kernel to stream a file directly from disk to the outgoing
+   * connection, bypassing userspace altogether (where supported by the
+   * underlying operating system. This is a very efficient way to serve
+   * files.
+   *
+   * @memberof HttpResponse
+   * @instance
+   * @param fileName  Path to file to send.
+   * @param notFoundFile
+   * @returns {{}}
+   */
+  this.sendFile = function(fileName, notFoundFile) {
+    if (notFoundFile === undefined) {
+      jresp.sendFile(fileName);
+    } else {
+      jresp.sendFile(fileName, notFoundFile);
+    }
+    return that;
+  }
+
+  writeStream(that, jresp);
+}
+
 function wrappedRequestHandler(handler) {
   return function(jreq) {
-
-    //We need to add some functions to the request and the response
-
-    var reqHeaders = null;
-    var reqParams = null;
-    var version = null;
-    var reqFormAttrs = null;
-
-    /**
-     * The HTTP request object passed as a parameter to a request listener
-     * @namespace HttpRequest
-     */
-    var req = {
-      /**
-       * The HTTP version - either HTTP_1_0 or HTTP_1_1
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {string} version
-       */
-      version: function() {
-        if (version === null) {
-          version = jreq.version().toString();
-        }
-        return version;
-      },
-
-      /**
-       * The HTTP method, one of HEAD, OPTIONS, GET, POST, PUT, DELETE, CONNECT, TRACE
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {string} method
-       */
-      method: function() {
-        return jreq.method();
-      },
-
-      /**
-       * The uri of the request. For example 'http://www.somedomain.com/somepath/somemorepath/somresource.foo?someparam=32&someotherparam=x
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {string} uri
-       */
-      uri: function() {
-        return jreq.uri();
-      },
-
-      /**
-       * The path part of the uri. For example /somepath/somemorepath/somresource.foo
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {string} path
-       */
-      path: function() {
-        return jreq.path();
-      },
-
-      /**
-       * The query part of the uri. For example someparam=32&someotherparam=x
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {string} query
-       */
-      query: function() {
-        return jreq.query();
-      },
-
-      /**
-       * The headers of the request.
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {wrapMultiMap}
-       */
-      headers: function() {
-        if (!reqHeaders) {
-          reqHeaders = wrapMultiMap(jreq.headers());
-        }
-        return reqHeaders;
-      },
-
-      /**
-       * Return the remote (client side) address of the request
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {wrapMultiMap}
-       */
-      params: function() {
-        if (!reqParams) {
-          reqParams = wrapMultiMap(jreq.params());
-        }
-        return reqParams;
-      },
-
-      /**
-       * Get the address of the remote peer as a Java InetSocketAddress object
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @return InetSocketAddress
-       */
-      remoteAddress: function() {
-        return jreq.remoteAddress();
-      },
-
-      /**
-       * Get an array of Java X509Certificate objects
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @return {Array} Array of Java X509Certificate objects
-       */
-      peerCertificateChain: function() {
-        return jreq.peerCertificateChain();
-      },
-
-      /**
-       * Return the absolute URI corresponding to the the HTTP request
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {string} absoluteURI
-       */
-      absoluteURI: function() {
-        return jreq.absoluteURI();
-      },
-
-      /**
-       * Return a form attributes object
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @returns {{}} The form attributes
-       */
-      formAttributes: function() {
-        if (!reqFormAttrs) {
-          reqFormAttrs =  wrapMultiMap(jreq.formAttributes());
-        }
-        return reqFormAttrs;
-      },
-
-      /**
-       * Set the upload handler. The handler will get notified once a new file
-       * upload was received and so allow to get notified by the upload in
-       * progress.
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @param handler The handler to call
-       * @returns {HttpRequest} this
-       */
-      uploadHandler: function(handler) {
-        if (handler) {
-          jreq.uploadHandler(wrapUploadHandler(handler));
-        }
-        return req;
-      },
-
-      /**
-       *  Set the body handler for this request, the handler receives a single
-       *  Buffer object as a parameter.  This can be used as a decorator.
-       *
-       * @memberof HttpRequest
-       * @instance
-       * @param handler The handler to call once the body was received
-       * @returns {HttpRequest} this
-       */
-      bodyHandler: function(handler) {
-        jreq.bodyHandler(handler);
-        return req;
-      },
-
-      /**
-       * @private
-       */
-      _to_java_request: function() {
-        return jreq;
-      }
-    };
-    readStream(req, jreq);
-
-    var jresp = jreq.response();
-    var respHeaders = null;
-    var respTrailers = null;
-
-    /**
-     * The response
-     *
-     * @namespace HttpResponse
-     */
-    var resp = {
-      /**
-       * Get or set HTTP status code of the response.
-       *
-       * @function
-       * @memberof HttpResponse
-       * @instance
-       */
-      statusCode: function(code) {
-        if (code) {
-          jresp.setStatusCode(code);
-          return resp;
-        } else {
-          return jresp.getStatusCode();
-        }
-      },
-
-      /**
-       * Get or set HTTP status message of the response.
-       *
-       * @memberof HttpResponse
-       * @instance
-       *
-       */
-      statusMessage: function(msg) {
-        if (msg) {
-          jresp.setStatusMessage(msg);
-          return resp;
-        } else {
-          return jresp.getStatusMessage();
-        }
-      },
-
-      /**
-       * Get or set if the response is chunked
-       *
-       * @memberof HttpResponse
-       * @instance
-       */
-      chunked: function(ch) {
-        if (ch) {
-          jresp.setChunked(ch);
-          return resp;
-        } else {
-          return jresp.isChunked();
-        }
-      },
-
-      /**
-       * Return the http headers of the response
-       *
-       * @memberof HttpResponse
-       * @instance
-       * @returns {wrapMultiMap} respHeaders
-       */
-      headers: function() {
-        if (!respHeaders) {
-          respHeaders = wrapMultiMap(jresp.headers());
-        }
-        return respHeaders;
-      },
-
-      /**
-       * Put a header on the response.
-       *
-       * @memberof HttpResponse
-       * @instance
-       * @param k The name under which the header should be stored
-       * @param v T the value of the header
-       * @returns {resp}
-       */
-      putHeader: function(k, v) {
-        jresp.putHeader(k, v);
-        return resp;
-      },
-
-      /**
-       * Return the trailing headers of the response
-       *
-       * @memberof HttpResponse
-       * @instance
-       * @returns {respTrailers}
-       */
-      trailers: function() {
-        if (!respTrailers) {
-          respTrailers = wrapMultiMap(jresp.trailers());
-        }
-        return respTrailers;
-      },
-
-      /**
-       * Put a trailing header
-       *
-       * @memberof HttpResponse
-       * @instance
-       * @param k The name under which the header should be stored
-       * @param v T the value of the header
-       * @returns {resp}
-       */
-      putTrailer: function(k, v) {
-        jresp.putTrailer(k, v);
-        return resp;
-      },
-
-      /**
-       * Write content to the response
-       *
-       * @memberof HttpResponse
-       * @instance
-       * @param arg0
-       * @param arg1
-       * @returns {{}}
-       */
-      write: function(arg0, arg1) {
-        if (arg1 === undefined) {
-          jresp.write(arg0);
-        } else {
-          jresp.write(arg0, arg1);
-        }
-        return resp;
-      },
-
-      /**
-       * Forces the head of the request to be written before end is called on the
-       * request. This is normally used to implement HTTP 100-continue handling,
-       * see continue_handler for more information.
-       *
-       * @memberof HttpResponse
-       * @instance
-       * @returns {resp}
-       */
-      sendHead: function() {
-        jresp.sendHead();
-        return resp;
-      },
-
-      end: function(arg0, arg1) {
-        if (arg0) {
-          if (arg1) {
-            jresp.end(arg0, arg1);
-          } else {
-            jresp.end(arg0);
-          }
-        } else {
-          jresp.end();
-        }
-      },
-
-      /**
-       * Tell the kernel to stream a file directly from disk to the outgoing
-       * connection, bypassing userspace altogether (where supported by the
-       * underlying operating system. This is a very efficient way to serve
-       * files.
-       *
-       * @memberof HttpResponse
-       * @instance
-       * @param fileName  Path to file to send.
-       * @param notFoundFile
-       * @returns {{}}
-       */
-      sendFile: function(fileName, notFoundFile) {
-        if (notFoundFile === undefined) {
-          jresp.sendFile(fileName);
-        } else {
-          jresp.sendFile(fileName, notFoundFile);
-        }
-        return resp;
-      },
-
-    };
-    writeStream(resp, jresp);
-
-    /**
-     * @member {module:vertx/http.HttpRequest}
-     * @instance
-     * @property HttpResponse response
-     */
-    req.response = resp;
-    handler(req);
+    handler(new http.HttpServerRequest(jreq));
   }
 }
 
@@ -599,6 +575,13 @@ function wrapWebsocketHandler(server, handler) {
 
 /**
  * Return a HttpServer
+ *
+ * @example
+ * var http = require('vertx/http');
+ * var server = http.createHttpServer();
+ *
+ * // setup request handlers and such...
+ * server.listen(8080, 'localhost');
  *
  * @desc Create and return an HttpServer object
  * @return {HttpServer}

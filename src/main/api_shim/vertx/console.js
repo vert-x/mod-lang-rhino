@@ -6,8 +6,16 @@ var stdout = java.lang.System.out;
 var stderr = java.lang.System.err;
 
 /**
- * Add a console object which will be familiar to JavaScript devs
- * @exports vertx/console
+ * A simple console object that can be used to print log messages
+ * errors, and warnings. 
+ * @example
+ * var console = require('vertx/console');
+ *
+ * console.log('Hello standard out');
+ * console.warn('Warning standard error');
+ * console.error('Alert! Alert!');
+ *
+ * @exports console
  */
 var console = {
   // TODO this should take varargs and allow formatting a la sprintf
