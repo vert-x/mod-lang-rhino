@@ -18,6 +18,11 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load the Vert.x API"
 }
 
+/**
+ * The 'vertx' module provides all of the vertx API
+ * @exports vertx
+ */
+
 var vertx = {};
 
 function addProps(obj) {
@@ -28,7 +33,14 @@ function addProps(obj) {
   }
 }
 
+/**
+ * The Buffer class.
+ * @constructor
+ */
 vertx.Buffer = require('vertx/buffer');
+/**
+ * The vertx event bus
+ */
 vertx.eventBus = require('vertx/event_bus');
 addProps(require('vertx/net'));
 addProps(require('vertx/http'));
