@@ -35,9 +35,9 @@ function addProps(obj) {
 
 /**
  * The Buffer class.
- * @constructor
  */
 vertx.Buffer = require('vertx/buffer');
+
 /**
  * The vertx event bus
  */

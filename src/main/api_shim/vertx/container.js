@@ -18,6 +18,10 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load the Vert.x API"
 }
 
+/**
+ * The vert.x container
+ * @exports vertx/container
+ */
 var container = {};
 
 var VERTICLE = 0;
