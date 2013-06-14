@@ -45,6 +45,7 @@ if (typeof __vertxload === 'string') {
  * When receiving a message in a handler the received object is an instance of EventBus::Message - this contains
  * the actual Hash of the message plus a reply method which can be used to reply to it.
  *
+ * @exports vertx/event_bus
  * @type {{}}
  */
 var eventBus = {};

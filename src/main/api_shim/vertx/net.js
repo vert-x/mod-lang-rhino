@@ -18,7 +18,6 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load the Vert.x API"
 }
 
-
 /**
  * The 'vertx/net' module provides NET functions
  * @exports vertx/net
