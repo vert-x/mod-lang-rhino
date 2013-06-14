@@ -33,7 +33,7 @@ if (typeof __vertxload === 'string') {
  *
  * @param rs
  * @param ws
- * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+ * @returns {Pump}
  * @constructor
  */
 var Pump = function(rs, ws) {
@@ -57,7 +57,7 @@ var Pump = function(rs, ws) {
   /**
    * Start the Pump. The Pump can be started and stopped multiple times
    *
-   * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+   * @returns {Pump}
    */
   this.start = function() {
     rs.dataHandler(dataHandler);
@@ -66,7 +66,7 @@ var Pump = function(rs, ws) {
   /**
    * Stop the Pump. The Pump can be started and stopped multiple times
    *
-   * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+   * @returns {Pump}
    */
   this.stop = function() {
     ws.drainHandler(null);
@@ -87,7 +87,7 @@ var Pump = function(rs, ws) {
    * Set the write queue max size
    *
    * @param maxSize The write queue max size
-   * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+   * @returns {Pump}
    */
   this.setWriteQueueMaxSize = function(maxSize) {
     ws.setWriteQueueMaxSize(maxSize);
@@ -96,6 +96,7 @@ var Pump = function(rs, ws) {
 }
 
 /**
+ * @module
  * @exports vertx/pump
  */
 module.exports = Pump;

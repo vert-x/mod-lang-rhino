@@ -18,4 +18,13 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load the Vert.x API"
 }
 
-module.exports = org.vertx.java.core.buffer.Buffer;
+/**
+ * A buffer - see Java documentation for applicable methods
+ * @constructor
+ */
+var Buffer = org.vertx.java.core.buffer.Buffer;
+
+/**
+ * @module vertx/buffer
+ */
+module.exports = Buffer

@@ -22,7 +22,6 @@ if (typeof __vertxload === 'string') {
  * The 'vertx/http' module provides HTTP functions
  * @exports vertx/http
  */
-
 var http = {};
 
 load("vertx/read_stream.js");
