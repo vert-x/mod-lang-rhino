@@ -30,6 +30,7 @@ var jfs = __jvertx.fileSystem();
  * there was no result to return.
  * The synchronous versions return the results, or throw exceptions directly.
  * @type {{}}
+ * @exports vertx/filesystem
  */
 var fileSystem = {};
 

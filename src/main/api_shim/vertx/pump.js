@@ -33,11 +33,12 @@ if (typeof __vertxload === 'string') {
  *
  * @param rs
  * @param ws
- * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
+ * @returns {Pump}
  * @constructor
  */
 var Pump = function(rs, ws) {
 
+  var that = this;
   var pumped = 0;
 
   var drainHandler = function() {
@@ -53,48 +54,49 @@ var Pump = function(rs, ws) {
     }
   }
 
-  var p = {
-    /**
-     * Start the Pump. The Pump can be started and stopped multiple times
-     *
-     * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
-     */
-    start: function() {
-      rs.dataHandler(dataHandler);
-      return p;
-    },
-    /**
-     * Stop the Pump. The Pump can be started and stopped multiple times
-     *
-     * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
-     */
-    stop: function() {
-      ws.drainHandler(null);
-      rs.dataHandler(null);
-      return p;
-    },
+  /**
+   * Start the Pump. The Pump can be started and stopped multiple times
+   *
+   * @returns {Pump}
+   */
+  this.start = function() {
+    rs.dataHandler(dataHandler);
+    return that;
+  },
+  /**
+   * Stop the Pump. The Pump can be started and stopped multiple times
+   *
+   * @returns {Pump}
+   */
+  this.stop = function() {
+    ws.drainHandler(null);
+    rs.dataHandler(null);
+    return that;
+  },
 
-    /**
-     * Return the total number of bytes pumped by this pump
-     *
-     * @returns {number}
-     */
-    getBytesPumped: function() {
-      return pumped;
-    },
+  /**
+   * Return the total number of bytes pumped by this pump
+   *
+   * @returns {number}
+   */
+  this.getBytesPumped = function() {
+    return pumped;
+  },
 
-    /**
-     * Set the write queue max size
-     *
-     * @param maxSize The write queue max size
-     * @returns {{start: Function, stop: Function, getBytesPumped: Function, setWriteQueueMaxSize: Function}}
-     */
-    setWriteQueueMaxSize: function(maxSize) {
-      ws.setWriteQueueMaxSize(maxSize);
-      return p;
-    }
-  };
-  return p;
+  /**
+   * Set the write queue max size
+   *
+   * @param maxSize The write queue max size
+   * @returns {Pump}
+   */
+  this.setWriteQueueMaxSize = function(maxSize) {
+    ws.setWriteQueueMaxSize(maxSize);
+    return that;
+  }
 }
 
+/**
+ * @module
+ * @exports vertx/pump
+ */
 module.exports = Pump;

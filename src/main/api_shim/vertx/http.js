@@ -22,7 +22,6 @@ if (typeof __vertxload === 'string') {
  * The 'vertx/http' module provides HTTP functions
  * @exports vertx/http
  */
-
 var http = {};
 
 load("vertx/read_stream.js");
@@ -42,137 +41,183 @@ function wrappedRequestHandler(handler) {
     var version = null;
     var reqFormAttrs = null;
 
-    var req = {};
+    /**
+     * The HTTP request object passed as a parameter to a request listener
+     * @namespace HttpRequest
+     */
+    var req = {
+      /**
+       * The HTTP version - either HTTP_1_0 or HTTP_1_1
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {string} version
+       */
+      version: function() {
+        if (version === null) {
+          version = jreq.version().toString();
+        }
+        return version;
+      },
+
+      /**
+       * The HTTP method, one of HEAD, OPTIONS, GET, POST, PUT, DELETE, CONNECT, TRACE
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {string} method
+       */
+      method: function() {
+        return jreq.method();
+      },
+
+      /**
+       * The uri of the request. For example 'http://www.somedomain.com/somepath/somemorepath/somresource.foo?someparam=32&someotherparam=x
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {string} uri
+       */
+      uri: function() {
+        return jreq.uri();
+      },
+
+      /**
+       * The path part of the uri. For example /somepath/somemorepath/somresource.foo
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {string} path
+       */
+      path: function() {
+        return jreq.path();
+      },
+
+      /**
+       * The query part of the uri. For example someparam=32&someotherparam=x
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {string} query
+       */
+      query: function() {
+        return jreq.query();
+      },
+
+      /**
+       * The headers of the request.
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {wrapMultiMap}
+       */
+      headers: function() {
+        if (!reqHeaders) {
+          reqHeaders = wrapMultiMap(jreq.headers());
+        }
+        return reqHeaders;
+      },
+
+      /**
+       * Return the remote (client side) address of the request
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {wrapMultiMap}
+       */
+      params: function() {
+        if (!reqParams) {
+          reqParams = wrapMultiMap(jreq.params());
+        }
+        return reqParams;
+      },
+
+      /**
+       * Get the address of the remote peer as a Java InetSocketAddress object
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @return InetSocketAddress
+       */
+      remoteAddress: function() {
+        return jreq.remoteAddress();
+      },
+
+      /**
+       * Get an array of Java X509Certificate objects
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @return {Array} Array of Java X509Certificate objects
+       */
+      peerCertificateChain: function() {
+        return jreq.peerCertificateChain();
+      },
+
+      /**
+       * Return the absolute URI corresponding to the the HTTP request
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {string} absoluteURI
+       */
+      absoluteURI: function() {
+        return jreq.absoluteURI();
+      },
+
+      /**
+       * Return a form attributes object
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @returns {{}} The form attributes
+       */
+      formAttributes: function() {
+        if (!reqFormAttrs) {
+          reqFormAttrs =  wrapMultiMap(jreq.formAttributes());
+        }
+        return reqFormAttrs;
+      },
+
+      /**
+       * Set the upload handler. The handler will get notified once a new file
+       * upload was received and so allow to get notified by the upload in
+       * progress.
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @param handler The handler to call
+       * @returns {HttpRequest} this
+       */
+      uploadHandler: function(handler) {
+        if (handler) {
+          jreq.uploadHandler(wrapUploadHandler(handler));
+        }
+        return req;
+      },
+
+      /**
+       *  Set the body handler for this request, the handler receives a single
+       *  Buffer object as a parameter.  This can be used as a decorator.
+       *
+       * @memberof HttpRequest
+       * @instance
+       * @param handler The handler to call once the body was received
+       * @returns {HttpRequest} this
+       */
+      bodyHandler: function(handler) {
+        jreq.bodyHandler(handler);
+        return req;
+      },
+
+      /**
+       * @private
+       */
+      _to_java_request: function() {
+        return jreq;
+      }
+    };
     readStream(req, jreq);
-
-    /**
-     * The HTTP version - either HTTP_1_0 or HTTP_1_1
-     *
-     * @returns {string} version
-     */
-    req.version = function() {
-      if (version === null) {
-        version = jreq.version().toString();
-      }
-      return version;
-    };
-
-    /**
-     * The HTTP method, one of HEAD, OPTIONS, GET, POST, PUT, DELETE, CONNECT, TRACE
-     *
-     * @returns {string} method
-     */
-    req.method = function() {
-      return jreq.method();
-    };
-
-    /**
-     * The uri of the request. For example 'http://www.somedomain.com/somepath/somemorepath/somresource.foo?someparam=32&someotherparam=x
-     *
-     * @returns {string} uri
-     */
-    req.uri = function() {
-      return jreq.uri();
-    };
-
-    /**
-     * The path part of the uri. For example /somepath/somemorepath/somresource.foo
-     *
-     * @returns {string} path
-     */
-    req.path = function() {
-      return jreq.path();
-    };
-
-    /**
-     * The query part of the uri. For example someparam=32&someotherparam=x
-     *
-     * @returns {string} query
-     */
-    req.query = function() {
-      return jreq.query();
-    };
-
-    /**
-     * The headers of the request.
-     *
-     * @returns {wrapMultiMap}
-     */
-    req.headers = function() {
-      if (!reqHeaders) {
-        reqHeaders = wrapMultiMap(jreq.headers());
-      }
-      return reqHeaders;
-    };
-
-    /**
-     * Return the remote (client side) address of the request
-     *
-     * @returns {wrapMultiMap}
-     */
-    req.params = function() {
-      if (!reqParams) {
-        reqParams = wrapMultiMap(jreq.params());
-      }
-      return reqParams;
-    };
-
-    /**
-     * The address of the remote peer
-     */
-    req.remoteAddress = function() {
-      return jreq.remoteAddress();
-    };
-
-
-    req.peerCertificateChain = function() {
-      return jreq.peerCertificateChain();
-    };
-
-    /**
-     * Return the absolute URI corresponding to the the HTTP request
-     *
-     * @returns {string} absoluteURI
-     */
-    req.absoluteURI = function() {
-      return jreq.absoluteURI();
-    };
-
-    req.formAttributes = function() {
-      if (!reqFormAttrs) {
-        reqFormAttrs =  wrapMultiMap(jreq.formAttributes());
-      }
-      return reqFormAttrs;
-    }
-
-    /**
-     * Set the upload handler. The handler will get notified once a new file upload was received and so allow to
-     * get notified by the upload in progress.
-     *
-     * @param handler The handler to call
-     * @returns {req}
-     */
-    req.uploadHandler = function(handler) {
-      if (handler) {
-        jreq.uploadHandler(wrapUploadHandler(handler));
-      }
-      return req;
-    }
-
-    /**
-     *  Set the body handler for this request, the handler receives a single Buffer object as a parameter.
-     *  This can be used as a decorator.
-     *
-     * @param handler The handler to call once the body was received
-     * @returns {req}
-     */
-    req.bodyHandler = function(handler) {
-      jreq.bodyHandler(handler);
-      return req;
-    }
-    req._to_java_request = function() {
-      return jreq;
-    }
 
     var jresp = jreq.response();
     var respHeaders = null;
@@ -181,151 +226,185 @@ function wrappedRequestHandler(handler) {
     /**
      * The response
      *
-     * @type {{}}
+     * @namespace HttpResponse
      */
-    var resp = {};
+    var resp = {
+      /**
+       * Get or set HTTP status code of the response.
+       *
+       * @function
+       * @memberof HttpResponse
+       * @instance
+       */
+      statusCode: function(code) {
+        if (code) {
+          jresp.setStatusCode(code);
+          return resp;
+        } else {
+          return jresp.getStatusCode();
+        }
+      },
+
+      /**
+       * Get or set HTTP status message of the response.
+       *
+       * @memberof HttpResponse
+       * @instance
+       *
+       */
+      statusMessage: function(msg) {
+        if (msg) {
+          jresp.setStatusMessage(msg);
+          return resp;
+        } else {
+          return jresp.getStatusMessage();
+        }
+      },
+
+      /**
+       * Get or set if the response is chunked
+       *
+       * @memberof HttpResponse
+       * @instance
+       */
+      chunked: function(ch) {
+        if (ch) {
+          jresp.setChunked(ch);
+          return resp;
+        } else {
+          return jresp.isChunked();
+        }
+      },
+
+      /**
+       * Return the http headers of the response
+       *
+       * @memberof HttpResponse
+       * @instance
+       * @returns {wrapMultiMap} respHeaders
+       */
+      headers: function() {
+        if (!respHeaders) {
+          respHeaders = wrapMultiMap(jresp.headers());
+        }
+        return respHeaders;
+      },
+
+      /**
+       * Put a header on the response.
+       *
+       * @memberof HttpResponse
+       * @instance
+       * @param k The name under which the header should be stored
+       * @param v T the value of the header
+       * @returns {resp}
+       */
+      putHeader: function(k, v) {
+        jresp.putHeader(k, v);
+        return resp;
+      },
+
+      /**
+       * Return the trailing headers of the response
+       *
+       * @memberof HttpResponse
+       * @instance
+       * @returns {respTrailers}
+       */
+      trailers: function() {
+        if (!respTrailers) {
+          respTrailers = wrapMultiMap(jresp.trailers());
+        }
+        return respTrailers;
+      },
+
+      /**
+       * Put a trailing header
+       *
+       * @memberof HttpResponse
+       * @instance
+       * @param k The name under which the header should be stored
+       * @param v T the value of the header
+       * @returns {resp}
+       */
+      putTrailer: function(k, v) {
+        jresp.putTrailer(k, v);
+        return resp;
+      },
+
+      /**
+       * Write content to the response
+       *
+       * @memberof HttpResponse
+       * @instance
+       * @param arg0
+       * @param arg1
+       * @returns {{}}
+       */
+      write: function(arg0, arg1) {
+        if (arg1 === undefined) {
+          jresp.write(arg0);
+        } else {
+          jresp.write(arg0, arg1);
+        }
+        return resp;
+      },
+
+      /**
+       * Forces the head of the request to be written before end is called on the
+       * request. This is normally used to implement HTTP 100-continue handling,
+       * see continue_handler for more information.
+       *
+       * @memberof HttpResponse
+       * @instance
+       * @returns {resp}
+       */
+      sendHead: function() {
+        jresp.sendHead();
+        return resp;
+      },
+
+      end: function(arg0, arg1) {
+        if (arg0) {
+          if (arg1) {
+            jresp.end(arg0, arg1);
+          } else {
+            jresp.end(arg0);
+          }
+        } else {
+          jresp.end();
+        }
+      },
+
+      /**
+       * Tell the kernel to stream a file directly from disk to the outgoing
+       * connection, bypassing userspace altogether (where supported by the
+       * underlying operating system. This is a very efficient way to serve
+       * files.
+       *
+       * @memberof HttpResponse
+       * @instance
+       * @param fileName  Path to file to send.
+       * @param notFoundFile
+       * @returns {{}}
+       */
+      sendFile: function(fileName, notFoundFile) {
+        if (notFoundFile === undefined) {
+          jresp.sendFile(fileName);
+        } else {
+          jresp.sendFile(fileName, notFoundFile);
+        }
+        return resp;
+      },
+
+    };
     writeStream(resp, jresp);
 
     /**
-     * Get or set HTTP status code of the response.
-     *
+     * @member {module:vertx/http.HttpRequest}
+     * @instance
+     * @property HttpResponse response
      */
-    resp.statusCode = function(code) {
-      if (code) {
-        jresp.setStatusCode(code);
-        return resp;
-      } else {
-        return jresp.getStatusCode();
-      }
-    };
-
-    /**
-     * Get or set HTTP status message of the response.
-     *
-     *
-     */
-    resp.statusMessage = function(msg) {
-      if (msg) {
-        jresp.setStatusMessage(msg);
-        return resp;
-      } else {
-        return jresp.getStatusMessage();
-      }
-    };
-
-    /**
-     * Get or set if the response is chunked
-     *
-     */
-    resp.chunked = function(ch) {
-      if (ch) {
-        jresp.setChunked(ch);
-        return resp;
-      } else {
-        return jresp.isChunked();
-      }
-    };
-
-    /**
-     * Return the http headers of the response
-     *
-     * @returns {wrapMultiMap} respHeaders
-     */
-    resp.headers = function() {
-      if (!respHeaders) {
-        respHeaders = wrapMultiMap(jresp.headers());
-      }
-      return respHeaders;
-    };
-
-    /**
-     * Put a header on the response.
-     *
-     * @param k The name under which the header should be stored
-     * @param v T the value of the header
-     * @returns {resp}
-     */
-    resp.putHeader = function(k, v) {
-      jresp.putHeader(k, v);
-      return resp;
-    };
-    /**
-     * Return the trailing headers of the response
-     *
-     * @returns {respTrailers}
-     */
-    resp.trailers = function() {
-      if (!respTrailers) {
-        respTrailers = wrapMultiMap(jresp.trailers());
-      }
-      return respTrailers;
-    };
-
-    /**
-     * Put a trailing header
-     *
-     * @param k The name under which the header should be stored
-     * @param v T the value of the header
-     * @returns {resp}
-     */
-    resp.putTrailer = function(k, v) {
-      jresp.putTrailer(k, v);
-      return resp;
-    };
-
-    /**
-     * Write content to the response
-     *
-     * @param arg0
-     * @param arg1
-     * @returns {{}}
-     */
-    resp.write = function(arg0, arg1) {
-      if (arg1 === undefined) {
-        jresp.write(arg0);
-      } else {
-        jresp.write(arg0, arg1);
-      }
-      return resp;
-    };
-
-    /**
-     * Forces the head of the request to be written before end is called on the request. This is normally used
-     * to implement HTTP 100-continue handling, see continue_handler for more information.
-     * @returns {resp}
-     */
-    resp.sendHead = function() {
-      jresp.sendHead();
-      return resp;
-    };
-    resp.end = function(arg0, arg1) {
-      if (arg0) {
-        if (arg1) {
-          jresp.end(arg0, arg1);
-        } else {
-          jresp.end(arg0);
-        }
-      } else {
-        jresp.end();
-      }
-    };
-
-    /**
-     * Tell the kernel to stream a file directly from disk to the outgoing connection, bypassing userspace altogether
-     * (where supported by the underlying operating system. This is a very efficient way to serve files.
-     * @param fileName  Path to file to send.
-     * @param notFoundFile
-     * @returns {{}}
-     */
-    resp.sendFile = function(fileName, notFoundFile) {
-      if (notFoundFile === undefined) {
-        jresp.sendFile(fileName);
-      } else {
-        jresp.sendFile(fileName, notFoundFile);
-      }
-      return resp;
-    };
-
     req.response = resp;
     handler(req);
   }
@@ -418,12 +497,14 @@ function wrapWebsocketHandler(server, handler) {
 
     /**
      *
-     * When a WebSocket is created it automatically registers an event handler with the eventbus, the ID of that
-     * handler is returned.
+     * When a WebSocket is created it automatically registers an event handler
+     * with the eventbus, the ID of that handler is returned.
      *
-     * Given this ID, a different event loop can send a binary frame to that event handler using the event bus and
-     * that buffer will be received by this instance in its own event loop and written to the underlying connection. This
-     * allows you to write data to other websockets which are owned by different event loops.
+     * Given this ID, a different event loop can send a binary frame to that
+     * event handler using the event bus and that buffer will be received by
+     * this instance in its own event loop and written to the underlying
+     * connection. This allows you to write data to other websockets which are
+     * owned by different event loops.
      *
      * @returns {string} id
      */
@@ -432,12 +513,14 @@ function wrapWebsocketHandler(server, handler) {
     };
 
     /**
-     * When a WebSocket is created it automatically registers an event handler with the eventbus, the ID of that
-     * handler is returned.
+     * When a WebSocket is created it automatically registers an event handler
+     * with the eventbus, the ID of that handler is returned.
      *
-     * Given this ID, a different event loop can send a text frame to that event handler using the event bus and
-     * that buffer will be received by this instance in its own event loop and written to the underlying connection. This
-     * allows you to write data to other websockets which are owned by different event loops.
+     * Given this ID, a different event loop can send a text frame to that
+     * event handler using the event bus and that buffer will be received by
+     * this instance in its own event loop and written to the underlying
+     * connection. This allows you to write data to other websockets which are
+     * owned by different event loops.
      *
      * @returns {string} id
      */
@@ -518,96 +601,106 @@ function wrapWebsocketHandler(server, handler) {
  * Return a HttpServer
  *
  * @desc Create and return an HttpServer object
- * @return {{}}
+ * @return {HttpServer}
  */
 http.createHttpServer = function() {
 
   var jserver = __jvertx.createHttpServer();
 
   /**
-   * An HTTP and websockets server
+   * An HTTP and websockets server. Created by calling 
+   * {@linkcode module:vertx/http.createHttpServer|createHttpServer}
    *
-   * @type {{}}
+   * @namespace HttpServer
    */
-  var server = {};
+  var server = {
+    /**
+     * Set org get the HTTP request handler for the server.
+     * As HTTP requests arrive on the server it will be passed to the handler.
+     *
+     * @param handler the function used to handle the request.
+     * @return {HttpServer}
+     * @memberof HttpServer
+     * @instance
+     */
+    requestHandler: function(handler) {
+      if (handler) {
+        if (typeof handler === 'function') {
+          handler = wrappedRequestHandler(handler);
+        } else {
+          // It's a route matcher
+          handler = handler._to_java_handler();
+        }
+        jserver.requestHandler(handler);
+      }
+      return server;
+    },
+
+    /**
+     * Set org get the websocket handler for the server.
+     * As websocket requests arrive on the server it will be passed to the handler.
+     *
+     * @param handler the function used to handle the request.
+     * @return {HttpServer}
+     * @memberof HttpServer
+     * @instance
+     */
+    websocketHandler: function(handler) {
+      if (handler) {
+        jserver.websocketHandler(wrapWebsocketHandler(true, handler));
+      }
+      return server;
+    },
+
+    /**
+     * Close the server and notify the handler once it was done
+     *
+     * @param handler The handler to notify
+     * @memberof HttpServer
+     * @instance
+     */
+    close: function(handler) {
+      if (jserver) {
+        jserver.close(handler);
+      } else {
+        jserver.close();
+      }
+    },
+
+    /**
+     * Start to listen for HTTP
+     *
+     * @returns {HttpServer}
+     * @memberof HttpServer
+     * @instance
+     */
+    listen: function() {
+      var args = Array.prototype.slice.call(arguments);
+      var handler = getArgValue('function', args);
+      var host = getArgValue('string', args);
+      var port = getArgValue('number', args);
+      if (handler) {
+        handler = adaptAsyncResultHandler(handler);
+      }
+      if (host == null) {
+        host = "0.0.0.0";
+      }
+      jserver.listen(port, host, handler);
+      return server;
+    },
+
+    /**
+     * @private
+     */
+    _to_java_server: function() {
+      return jserver;
+    }
+  };
   sslSupport(server, jserver);
   serverSslSupport(server, jserver);
   tcpSupport(server, jserver);
   serverTcpSupport(server, jserver);
 
-  /**
-   * Set org get the HTTP request handler for the server.
-   * As HTTP requests arrive on the server it will be passed to the handler.
-   *
-   * @param handler the function used to handle the request.
-   * @return server
-   */
-  server.requestHandler = function(handler) {
-    if (handler) {
-      if (typeof handler === 'function') {
-        handler = wrappedRequestHandler(handler);
-      } else {
-        // It's a route matcher
-        handler = handler._to_java_handler();
-      }
-      jserver.requestHandler(handler);
-    }
-    return server;
-  };
-
-  /**
-   * Set org get the websocket handler for the server.
-   * As websocket requests arrive on the server it will be passed to the handler.
-   *
-   * @param handler the function used to handle the request.
-   * @return server
-   */
-  server.websocketHandler = function(handler) {
-    if (handler) {
-      jserver.websocketHandler(wrapWebsocketHandler(true, handler));
-    }
-    return server;
-  };
-
-  /**
-   * Close the server and notify the handler once it was done
-   *
-   * @param handler The handler to notify
-   */
-  server.close = function(handler) {
-    if (jserver) {
-      jserver.close(handler);
-    } else {
-      jserver.close();
-    }
-  };
-
-  /**
-   * Start to listen for HTTP
-   *
-   * @returns {{server}}
-   */
-  server.listen = function() {
-    var args = Array.prototype.slice.call(arguments);
-    var handler = getArgValue('function', args);
-    var host = getArgValue('string', args);
-    var port = getArgValue('number', args);
-    if (handler) {
-      handler = adaptAsyncResultHandler(handler);
-    }
-    if (host == null) {
-      host = "0.0.0.0";
-    }
-    jserver.listen(port, host, handler);
-    return server;
-  }
-
-  /**
-   * @private
-   */
-  server._to_java_server = function() {
-    return jserver;
-  }
   return server;
 }
 

@@ -18,25 +18,32 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load the Vert.x API"
 }
 
-var sharedData = {};
+/**
+ * @module vertx/shared_data
+ */
+module.exports = {
+  /**
+   * Gets a shared map
+   *
+   * @param name The name of the shared map
+   * @return {{map}}
+   */
+  getMap: function(name) {
+    return __jvertx.sharedData().getMap(name);
+  },
 
-sharedData.getMap = function(name) {
-  return __jvertx.sharedData().getMap(name);
+  getSet: function(name) {
+    return __jvertx.sharedData().getSet(name);
+  },
+
+  removeMap: function(name) {
+    return __jvertx.sharedData().removeMap(name);
+  },
+
+  removeSet: function(name) {
+    return __jvertx.sharedData().removeSet(name);
+  }
 }
-
-sharedData.getSet = function(name) {
-  return __jvertx.sharedData().getSet(name);
-}
-
-sharedData.removeMap = function(name) {
-  return __jvertx.sharedData().removeMap(name);
-}
-
-sharedData.removeSet = function(name) {
-  return __jvertx.sharedData().removeSet(name);
-}
-
-module.exports = sharedData;
 
 
 

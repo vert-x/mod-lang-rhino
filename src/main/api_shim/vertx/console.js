@@ -5,10 +5,12 @@ if (typeof __vertxload === 'string') {
 var stdout = java.lang.System.out;
 var stderr = java.lang.System.err;
 
-// Add a console object which will be familiar to JavaScript devs
+/**
+ * Add a console object which will be familiar to JavaScript devs
+ * @exports vertx/console
+ */
 var console = {
   // TODO this should take varargs and allow formatting a la sprintf
-
   /**
    * Log the msg to STDOUT.
    *
