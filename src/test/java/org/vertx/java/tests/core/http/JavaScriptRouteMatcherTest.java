@@ -122,5 +122,21 @@ public class JavaScriptRouteMatcherTest extends TestBase {
     startTest(getMethodName());
   }
   
-  
+  public void testRequestIdentity() {
+    startTest(getMethodName());
+  }
+
+  public void testRequestMapCleanup() {
+    startTest(getMethodName());
+  }
+
+  public void testRequestMapCleanupNoMatch() {
+    startTest(getMethodName());
+  }
+
+  public void testUnusedRequestMapIsClean() {
+    startTest(getMethodName());
+  }
+
+
 }

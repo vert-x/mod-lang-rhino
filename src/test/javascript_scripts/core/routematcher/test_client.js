@@ -168,6 +168,69 @@ function testInterceptAll() {
 
 }
 
+function testRequestIdentity() {
+  var req;
+  var handler = function (_req) {
+    // Store request so we can check identity in the route handler below.
+    req = _req;
+    rm.call(_req);
+  }
+
+  server.requestHandler(handler);
+
+  rm.get("/checkIdentityAfterRouteMatching", function (_req) {
+    tu.azzert(req === _req);
+    tu.testComplete();
+  });
+
+  server.listen(8080, "0.0.0.0", function() {
+    client.get("/checkIdentityAfterRouteMatching").end();
+  });
+}
+
+function testRequestMapCleanup() {
+  var handler = function (req) {
+    rm.call(req);
+  }
+
+  server.requestHandler(handler);
+
+  rm.get("/checkRequestCleanup", function (req) {
+    tu.azzert(rm._requests_in_limbo_map().isEmpty());
+    tu.testComplete();
+  });
+
+  server.listen(8080, "0.0.0.0", function() {
+    client.get("/checkRequestCleanup").end();
+  });
+}
+
+function testRequestMapCleanupNoMatch() {
+  var handler = function (req) {
+    rm.call(req);
+  }
+
+  server.requestHandler(handler);
+
+  server.listen(8080, "0.0.0.0", function() {
+    client.get("some-uri", function(resp) {
+      tu.azzert(rm._requests_in_limbo_map().isEmpty());
+      tu.testComplete();
+    }).end();
+  });
+}
+
+function testUnusedRequestMapIsClean() {
+  server.requestHandler(rm);
+
+  server.listen(8080, "0.0.0.0", function() {
+    client.get("some-uri", function(resp) {
+      tu.azzert(rm._requests_in_limbo_map().isEmpty());
+      tu.testComplete();
+    }).end();
+  });
+}
+
 tu.registerTests(this);
 tu.appReady();
 
