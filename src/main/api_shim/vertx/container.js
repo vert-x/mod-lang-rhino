@@ -15,22 +15,29 @@
  */
 
 if (typeof __vertxload === 'string') {
-  throw "Use require() to load the Vert.x API"
+  throw "Use require() to load Vert.x API modules"
 }
 
+/** 
+ * A DeploymentId is used to identify a specific verticle deployment.
+ * @see module:vertx/container
+ * @typedef {string} DeploymentId 
+ * */
+
 /**
- * The vert.x container
+ * The vert.x container. The container handles deploying and undeploying
+ * modules, and overall control of the runtime.
+ *
  * @exports vertx/container
  */
+
 var container = {};
 
 var VERTICLE = 0;
 var WORKER = 1;
 var MODULE = 2;
 
-load("vertx/convert_handler.js");
-load("vertx/args.js");
-
+load("vertx/helpers.js");
 
 function deploy(deployType, name, args) {
   var doneHandler = getArgValue('function', args);
@@ -52,6 +59,8 @@ function deploy(deployType, name, args) {
     instances = 1;
   }
 
+  //console.log("Deploying " + name + " config: " + config + " multi-threaded " + multiThreaded + " instances " + instances + " doneHandler " + doneHandler);
+
   switch (deployType) {
     case VERTICLE: {
       __jcontainer.deployVerticle(name, config, instances, doneHandler);
@@ -70,7 +79,7 @@ function deploy(deployType, name, args) {
 
 /**
  * Deploy a verticle. The actual deploy happens asynchronously
- * @param main the main of the verticle to deploy
+ * @param {string} main the main of the verticle to deploy
  */
 container.deployVerticle = function(main) {
   var args = Array.prototype.slice.call(arguments);
@@ -79,9 +88,8 @@ container.deployVerticle = function(main) {
 }
 
 /**
- * Deploy a worker verticle. The actual deploy happens asynchronously
- *
- * @param main the main of the verticle to deploy
+ * Deploy a verticle. The actual deploy happens asynchronously
+ * @param {string} main the main of the verticle to deploy
  */
 container.deployWorkerVerticle = function(main) {
   var args = Array.prototype.slice.call(arguments);
@@ -92,7 +100,7 @@ container.deployWorkerVerticle = function(main) {
 /**
  * Deploy a module. The actual deploy happens asynchronously
  *
- * @param moduleMame The name of the module to deploy
+ * @param {string} moduleName The name of the module to deploy
  */
 container.deployModule = function(moduleName) {
   var args = Array.prototype.slice.call(arguments);
@@ -103,53 +111,52 @@ container.deployModule = function(moduleName) {
 /**
  * Undeploy a verticle
  *
- * @param id the unique id of the deployment
- * @param handler an handler that will be called when undeploy has completed
+ * @param {DeploymentId} id The unique id of the deployment
+ * @param {Handler} handler A handler that will be called when undeploy has completed
  */
-container.undeployVerticle = function(id, doneHandler) {
+container.undeployVerticle = function(name, doneHandler) {
   if (doneHandler) {
     doneHandler = adaptAsyncResultHandler(doneHandler);
   } else {
     doneHandler = null;
   }
-  __jcontainer.undeployVerticle(id, doneHandler);
+  __jcontainer.undeployVerticle(name, doneHandler);
 }
 
 /**
  * Undeploy a module
  *
- * @param id the unique id of the module
- * @param handler an handler that will be called when undeploy has completed
+ * @param {DeploymentId} id The unique id of the module
+ * @param {Handler} handler A handler that will be called when undeploy has completed
  */
-container.undeployModule = function(id, doneHandler) {
+container.undeployModule = function(name, doneHandler) {
   if (doneHandler) {
     doneHandler = adaptAsyncResultHandler(doneHandler);
   } else {
     doneHandler = null;
   }
-  __jcontainer.undeployModule(id, doneHandler);
+  __jcontainer.undeployModule(name, doneHandler);
 }
+
 /**
- * Cause the container to exit
+ * Causes the container to exit. All running modules will be undeployed.
  */
 container.exit = function() {
   __jcontainer.exit();
 }
-
 var j_conf = __jcontainer.config();
 container.config =  j_conf == null ? null : JSON.parse(j_conf.encode());
 
-container.env = {};
-var j_map = __jcontainer.env();
-var j_iter = j_map.entrySet().iterator();
-while (j_iter.hasNext()) {
-  var entry = j_iter.next();
-  container.env[entry.getKey()] = entry.getValue();
-}
+/**
+ * The container's environment variables
+ */
+container.env = __jcontainer.env();
 
+/**
+ * The container's logger
+ */
 container.logger = __jcontainer.logger();
 
 module.exports = container;
-
 
 

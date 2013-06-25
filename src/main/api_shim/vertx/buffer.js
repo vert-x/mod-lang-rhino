@@ -15,8 +15,13 @@
  */
 
 if (typeof __vertxload === 'string') {
-  throw "Use require() to load the Vert.x API"
+  throw "Use require() to load Vert.x API modules"
 }
+
+/**
+ * @see https://github.com/vert-x/vert.x/blob/master/vertx-core/src/main/java/org/vertx/java/core/buffer/Buffer.java
+ * @external org.vertx.java.core.buffer.Buffer
+ */
 
 /**
  * Most data in vert.x is shuffled around using buffers.
@@ -29,7 +34,11 @@ if (typeof __vertxload === 'string') {
  * vert.x Java documents. The methods documented for the Java Buffer objects
  * are applicable to Javascript Buffer instances as well. 
  *
- * Maybe some examples are in order.
+ * @see https://github.com/vert-x/vert.x/blob/master/vertx-core/src/main/java/org/vertx/java/core/buffer/Buffer.java
+ *
+ * @example
+ * var Buffer = require('vertx/buffer');
+ * var buff   = new Buffer('Hello!'); // this is actually a java thing
  *
  * @example <caption>Creating Buffers</caption>
  * var Buffer = require('vertx/buffer');
@@ -42,12 +51,18 @@ if (typeof __vertxload === 'string') {
  *
  * // etc etc
  * // TODO: Finish these examples
- * 
+ *
  * @constructor
  */
 var Buffer = org.vertx.java.core.buffer.Buffer;
 
+
 /**
- * @module buffer
+ * The Javascript API exposes Java <code>org.vertx.java.core.buffer.Buffer</code> 
+ * instances directly to Javascript.  See the Java documentation for
+ * information on the public API.
+ *
+ * @see https://github.com/vert-x/vert.x/blob/master/vertx-core/src/main/java/org/vertx/java/core/buffer/Buffer.java
+ * @module vertx/buffer
  */
-module.exports = Buffer
+module.exports = Buffer;

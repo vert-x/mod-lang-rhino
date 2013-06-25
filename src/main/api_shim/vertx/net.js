@@ -15,56 +15,89 @@
  */
 
 if (typeof __vertxload === 'string') {
-  throw "Use require() to load the Vert.x API"
+  throw "Use require() to load Vert.x API modules"
 }
 
 /**
- * The 'vertx/net' module provides NET functions
+ * The <code>vertx/net</code> module provides network client and server
+ * functions and classes.
  * @exports vertx/net
  */
 var net = {};
 
-load("vertx/convert_handler.js");
 load("vertx/ssl_support.js");
 load("vertx/tcp_support.js");
 load("vertx/read_stream.js");
 load("vertx/write_stream.js");
-load("vertx/args.js");
+load("vertx/helpers.js");
 
 /**
- * Return a HTTP Server
- *
- * @returns {{server}}
+ * Creates a {@linkcode module:vertx/net.NetServer|NetServer}.
+ * @returns {module:vertx/net.NetServer} A new server instance
  */
 net.createNetServer = function() {
+  return new net.NetServer();
+}
+
+/**
+ * Creates a {@linkcode module:vertx/net.NetClient|NetClient}.
+ * @returns {module:vertx/net.NetClient} A new client instance
+ */
+net.createNetClient = function() {
+  return new net.NetClient();
+}
+
+/**
+ * A <code>ConnectHandler</code> is a {@linkcode Handler} that accepts a
+ * {@linkcode module:vertx/net.NetSocket} as it's parameter.
+ * @typedef {function} ConnectHandler
+ * @param {module:vertx/net.NetSocket} netSocket The raw socket
+ */
+
+/**
+ * Represents a TCP or SSL server.  
+ * @constructor
+ * @mixes SSLSupport
+ * @mixes ServerSSLSupport
+ * @mixes TCPSupport
+ * @mixes ServerTCPSupport
+ */
+net.NetServer = function() {
+  var that = this;
   var jserver = __jvertx.createNetServer();
-  var server = {};
-  sslSupport(server, jserver);
-  serverSslSupport(server, jserver);
-  tcpSupport(server, jserver);
-  serverTcpSupport(server, jserver);
+
+  sslSupport(this, jserver);
+  serverSslSupport(this, jserver);
+  tcpSupport(this, jserver);
+  serverTcpSupport(this, jserver);
 
   /**
-   * Supply a connect handler for this server. The server can only have at most one connect handler at any one time.
-   * As the server accepts TCP or SSL connections it creates an instance of NetSocket and passes it to the
-   * connect handler.
+   * Supply a connect handler for this server. The server can only have at most
+   * one connect handler at any one time.  As the server accepts TCP or SSL
+   * connections it creates an instance of {@linkcode module:vertx/net.NetSocket}
+   * and passes it to the connect handler.
    *
-   * @param handler: connection handler
-   * @returns {{}}
+   * @param {ConnectHandler} handler the connection handler
+   * @returns {module:vertx/net.NetServer} this
    */
-  server.connectHandler = function(handler) {
+  this.connectHandler = function(handler) {
     jserver.connectHandler(function(result) {
-      handler(jsNetSocket(result));
+      handler(new net.NetSocket(result));
     });
-    return server;
-  };
+    return that;
+  }
 
   /**
-   * Start to listen for TCP
+   * Tell the server to start listening on all available interfaces and
+   * <code>port</code>. Be aware this is an async operation and the server may
+   * not bound on return of the method.
    *
-   * @returns {{server}}
+   * @param {number} port The network port to listen on
+   * @param {string} [host] The hostname or IP address to listen on
+   * @param {ConnectHandler} [handler] The connection handler
+   * @returns {module:vertx/net.NetServer} this
    */
-  server.listen = function() {
+  this.listen = function() {
     var args = Array.prototype.slice.call(arguments);
     var handler = getArgValue('function', args);
     var host = getArgValue('string', args);
@@ -76,64 +109,73 @@ net.createNetServer = function() {
       host = "0.0.0.0";
     }
     jserver.listen(port, host, handler);
-    return server;
-  };
+    return that;
+  }
 
   /**
-   * Close the server. The handler will be called when the close is complete.
-   *
-   * @param handler The handler which will be calling in completion.
+   * Close the server. This will close any open connections.
+   * @param {Handler} [handler] the handler to call when the close operation has completed
    */
-  server.close = function(handler) {
+  this.close = function(handler) {
     if (handler === undefined) {
       jserver.close();
     } else {
       jserver.close(adaptAsyncResultHandler(handler));
     }
-  };
+  }
 
   /**
-   * The actual port the server is listening on. This is useful if you bound the server specifying 0 as port number
-   * signifying an ephemeral port
-   *
-   * @returns {number} port
+   * The actual port the server is listening on. This is useful if you bound
+   * the server specifying 0 as port number signifying an ephemeral port.
+   * @returns {number} The port number the server is listening on
    */
-  server.port = function() {
+  this.port = function() {
     return jserver.port();
   }
 
   /**
-   * The host to which the server is bound.
-   *
-   * @returns {string} host
+   * The host name
+   * @returns {string} the host
    */
-  server.host = function() {
+  this.host = function() {
     return jserver.host();
   }
-  return server;
 }
 
 /**
- * Return a TCP Client
+ * <p>
+ * A TCP/SSL client.
+ * </p>
+ * <p>
+ * Multiple connections to different servers can be made using the same
+ * instance.  This client supports a configurable number of connection attempts
+ * and a configurable delay between attempts.
+ * </p>
  *
- * @returns {{client}}
+ * @constructor
+ * @mixes sslSupport~SSLSupport
+ * @mixes clientSslSupport~ClientSSLSupport
+ * @mixes tcpSupport~TCPSupport
  */
-net.createNetClient = function() {
+net.NetClient = function() {
   var jclient = __jvertx.createNetClient();
-  var client = {};
-  sslSupport(client, jclient);
-  clientSslSupport(client, jclient);
-  tcpSupport(client, jclient);
+  var that = this;
+  sslSupport(this, jclient);
+  clientSslSupport(this, jclient);
+  tcpSupport(this, jclient);
+
   /**
-   * Attempt to open a connection to a server. The connection is opened asynchronously and the result returned in the
-   * handler.
+   * Attempt to open a connection to a server at the specific port and host.
+   * The connect is done asynchronously and on success, a
+   * {@linkcode module:vertx/net.NetSocket} instance is supplied via the
+   * {@linkcode ConnectHandler} instance 
    *
-   * @param arg0: The port to connect to.
-   * @param arg2: The host or ip address to connect to.
-   * @param arg3: The connection handler
-   * @returns {{}}
+   * @param {number} port The port to connect on
+   * @param {string} [host] The hostname or IP address to connect to (default: localhost)
+   * @param {ConnectHandler} [connectHandler] The handler receiving the connection
+   * @return {module:vertx/net.NetClient} this
    */
-  client.connect = function(arg0, arg1, arg2) {
+  this.connect = function(arg0, arg1, arg2) {
     var port = arg0;
     var host;
     var handler;
@@ -145,124 +187,148 @@ net.createNetClient = function() {
       handler = arg2;
     }
     jclient.connect(port, host, adaptAsyncResultHandler(handler, function(result) {
-      return jsNetSocket(result);
+      return new net.NetSocket(result);
     }));
-    return client;
-  };
+    return that;
+  }
 
   /**
-   * Set or get the number of reconnection attempts. In the event a connection attempt fails, the client will attempt
-   * to connect a further number of times, before it fails. Default value is zero.
-   *
-   * @param attempts
-   * @returns {*}
+   * Get or set the number of reconnection attempts. Default value is zero.
+   * @param {number} [attempts] the number of reconnection attempts to make before failing
+   * @returns {number|module:vertx/net.NetClient}
    */
-  client.reconnectAttempts = function(attempts) {
+  this.reconnectAttempts = function(attempts) {
     if (attempts === undefined) {
       return jclient.getReconnectAttempts();
     } else {
       jclient.setReconnectAttempts(attempts);
-      return client;
+      return that;
     }
-  };
+  }
 
   /**
-   * Set or get the number of reconnect attempts
-   *
-   * @param interval
-   * @returns {*}
+   * Get or set the reconnection interval, in milliseconds.
+   * @param {number} [interval] the number of milliseconds to wait before attempting a reconnection
+   * @returns {number|module:vertx/net.NetClient}
    */
-  client.reconnectInterval = function(interval) {
+  this.reconnectInterval = function(interval) {
     if (interval === undefined) {
       return jclient.getReconnectInterval();
     } else {
       jclient.setReconnectInterval(interval);
-      return client;
+      return that;
     }
-  };
-
+  }
+  
   /**
-   * Get or set the connect timeout in milliseconds.
-   * @param timeout
-   * @returns {*}
+   * Get or set the connect timeout, in milliseconds.
+   * @param {number} [timeout] the number of milliseconds to wait before timing out a connection
+   * @returns {number|module:vertx/net.NetClient}
    */
-  client.connectTimeout = function(timeout) {
+  this.connectTimeout = function(timeout) {
     if (timeout === undefined) {
       return jclient.getConnectTimeout();
     } else {
       jclient.setConnectTimeout(timeout);
-      return client;
+      return that;
     }
-  };
-
+  }
+  
   /**
-   * Close the NetClient. Any open connections will be closed.
+   * Close the client.
    */
-  client.close = function() {
+  this.close = function() {
     jclient.close();
   }
-  return client;
 }
 
-function jsNetSocket(jNetSocket) {
-  var netSocket = {};
-  readStream(netSocket, jNetSocket);
-  writeStream(netSocket, jNetSocket);
+/**
+ * <p>
+ * A socket-like interface to a TCP/SSL connection on either the client or the
+ * server side.
+ * </p>
+ * <p>
+ * Instances of this class are created on the client side by a 
+ * {@linkcode module:vertx/net.NetClient} when a connection to a server is
+ * made, or on the server side by a {@linkcode vertx/net.NetServer}
+ * when a server accepts a connection.
+ * </p>
+ * <p>
+ * It implements both {@linkcode ReadStream} and 
+ * {@linkcode WriteStream} so it can be used with 
+ * {@linkcode module:vertx/pump~Pump} to pump data with flow control.
+ * </p>
+ * @constructor
+ * @mixes ReadStream
+ * @mixes WriteStream
+ */
+net.NetSocket = function(jNetSocket) {
+  var that = this;
+  readStream(this, jNetSocket);
+  writeStream(this, jNetSocket);
+
   /**
-   * Return the id of the write handler
-   *
-   * @returns {*}
+   * <p>
+   * When a NetSocket is created it automatically registers an event handler
+   * with the event bus, the ID of that handler is given by
+   * writeHandlerID.
+   * </p>
+   * <p>
+   * Given this ID, a different event loop can send a buffer to that event
+   * handler using the event bus and that buffer will be received by this
+   * instance in its own event loop and written to the underlying connection.
+   * This allows you to write data to other connections which are owned by
+   * different event loops.
+   * </p>
    */
-  netSocket.writeHandlerID = function() {
+  this.writeHandlerID = function() {
     return jNetSocket.writeHandlerID();
-  };
+  }
+
   /**
-   *
-   * Write data to the socket. The handler will be called when the data has actually been written to the wire.
-   *
-   * @param arg0: The data to write.
-   * @param arg1: The handler to notify
-   * @returns {{}}
+   * Write a string or {@linkcode module:vertx/buffer~Buffer} to the socket.
+   * @param {string|module:vertx/buffer~Buffer} chunk the data to write
+   * @param {string} [encoding] the charset for the data (default: UTF-8)
+   * @returns {module:vertx/net.NetSocket} this
    */
-  netSocket.write = function(arg0, arg1) {
+  this.write = function(arg0, arg1) {
     if (arg1 === undefined) {
       jNetSocket.write(arg0);
     } else {
       jNetSocket.write(arg0, arg1);
     }
-    return netSocket;
-  };
+    return that;
+  }
 
   /**
-   * Tell the kernel to stream a file directly from disk to the outgoing connection, bypassing userspace altogether
-   * (where supported by the underlying operating system. This is a very efficient way to stream files.
-   *
-   * @param filename Path to file to send.
-   * @returns {{}}
+   * Tell the kernel to stream a file as specified by <code>filename</code>
+   * directly from disk to the outgoing connection, bypassing userspace
+   * altogether (where supported by the underlying operating system. This is a
+   * very efficient way to stream files
+   * @param {string} filename The path to the file
+   * @returns {module:vertx/net.NetSocket} this
    */
-  netSocket.sendFile = function(filename) {
+  this.sendFile = function(filename) {
     jNetSocket.sendFile(filename);
-    return netSocket;
-  };
-
+    return that;
+  }
+  
   /**
-   * Return the remote address
-   *
-   * @returns {{ipaddress: string, port: number}}
+   * Returns the remote address for this socket
+   * @returns {Address} The remote address
    */
-  netSocket.remoteAddress = function() {
+  this.remoteAddress = function() {
     return {
       'ipaddress': jNetSocket.remoteAddress().getAddress().getHostAddress(),
       'port': jNetSocket.remoteAddress().getPort()
     };
-  };
+  }
 
   /**
-   * Return the local bound address
-   *
-   * @returns {{ipaddress: string, port: number}}
+   * Returns the local address for this socket
+   * @returns {Address} The local address
    */
-  netSocket.localAddress = function() {
+  this.localAddress = function() {
     return {
       'ipaddress': jNetSocket.localAddress().getAddress().getHostAddress(),
       'port': jNetSocket.localAddress().getPort()
@@ -270,23 +336,26 @@ function jsNetSocket(jNetSocket) {
   }
 
   /**
-   * Close the socket
+   * Close this socket.
    */
-  netSocket.close = function() {
+  this.close = function() {
     jNetSocket.close();
-  };
+  }
 
   /**
-   * Set a close handler on the socket.
-   *
-   * @param handler A block to be used as the handler
-   * @returns {{}}
+   * Set a {@linkcode Handler} to be called when this socket is closed
+   * @param {Handler} handler The close handler to use
    */
-  netSocket.closeHandler = function(handler) {
+  this.closeHandler = function(handler) {
     jNetSocket.closeHandler(handler);
-    return netSocket;
-  };
-  return netSocket;
+    return that;
+  }
 }
+
+/**
+ * @typedef {{}} Address
+ * @property {string} ipaddress The IP address
+ * @property {number} port The port for this address
+ */
 
 module.exports = net;

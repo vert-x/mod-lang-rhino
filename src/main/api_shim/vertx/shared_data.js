@@ -14,36 +14,57 @@
  * limitations under the License.
  */
 
-if (typeof __vertxload === 'string') {
-  throw "Use require() to load the Vert.x API"
+if (typeof module === 'undefined') {
+  throw "Use require() to load Vert.x API modules"
 }
 
 /**
- * @module vertx/shared_data
+ * <p>
+ * Sometimes it makes sense to allow different verticles instances to share
+ * data in a safe way. Vert.x allows simple Map and Set data structures to be
+ * shared between verticles.
+ * </p><p>
+ * There is a caveat: To prevent issues due to mutable data, vert.x only allows
+ * simple immutable types such as number, boolean and string or Buffer to be
+ * used in shared data. With a Buffer, it is automatically copied when
+ * retrieved from the shared data, so different verticle instances never see
+ * the same object instance.
+ * </p>
+ * @see https://github.com/vert-x/vert.x/blob/master/vertx-core/src/main/java/org/vertx/java/core/shareddata/SharedData.java
+ *
+ * @exports vertx/shared_data
  */
-module.exports = {
-  /**
-   * Gets a shared map
-   *
-   * @param name The name of the shared map
-   * @return {{map}}
-   */
-  getMap: function(name) {
-    return __jvertx.sharedData().getMap(name);
-  },
+var sharedData = {};
 
-  getSet: function(name) {
-    return __jvertx.sharedData().getSet(name);
-  },
-
-  removeMap: function(name) {
-    return __jvertx.sharedData().removeMap(name);
-  },
-
-  removeSet: function(name) {
-    return __jvertx.sharedData().removeSet(name);
-  }
+/**
+ * Return a <code>Map</code> with the specific <code>name</code>. All invocations of this
+ * method with the same value of <code>name</code> are guaranteed to return the same
+ * <code>Map</code> instance.
+ * @param {string} name The name of the map
+ * @return {{}} The shared data map
+ */
+sharedData.getMap = function(name) {
+  return __jvertx.sharedData().getMap(name);
 }
 
+/**
+ * Return a <code>Set</code> with the specific <code>name</code>. All invocations of this
+ * method with the same value of <code>name</code> are guaranteed to return the same
+ * <code>Set</code> instance.
+ * @param {string} name The name of the set
+ * @return {Array} The shared data set
+ */
+sharedData.getSet = function(name) {
+  return __jvertx.sharedData().getSet(name);
+}
 
+sharedData.removeMap = function(name) {
+  return __jvertx.sharedData().removeMap(name);
+}
+
+sharedData.removeSet = function(name) {
+  return __jvertx.sharedData().removeSet(name);
+}
+
+module.exports = sharedData;
 
