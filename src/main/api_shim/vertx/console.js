@@ -18,7 +18,6 @@ if (typeof __vertxload === 'string') {
   throw "Use require() to load Vert.x API modules"
 }
 
-
 var stdout = java.lang.System.out;
 var stderr = java.lang.System.err;
 /**

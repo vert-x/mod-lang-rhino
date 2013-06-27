@@ -49,8 +49,7 @@ if (typeof __vertxload === 'string') {
  * // Create a buffer from a string and specify an encoding
  * buff = new Buffer('Too hot, too hot!', 'UTF-16');
  *
- * // etc etc
- * // TODO: Finish these examples
+ * Please see the API manual for more examples
  *
  * @constructor
  */

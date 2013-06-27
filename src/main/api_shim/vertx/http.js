@@ -1721,7 +1721,5 @@ function wrappedRequestHandler(handler) {
   }
 }
 
-
-
 module.exports = http;
 

@@ -58,10 +58,20 @@ sharedData.getSet = function(name) {
   return __jvertx.sharedData().getSet(name);
 }
 
+/**
+ * Remove the map with the specific <code>name</code.
+ * @param {string} name The name of the map to remove
+ * @returns {boolean} true if the map was removed
+ */
 sharedData.removeMap = function(name) {
   return __jvertx.sharedData().removeMap(name);
 }
 
+/**
+ * Remove the set with the specific <code>name</code.
+ * @param {string} name The name of the set to remove
+ * @returns {boolean} true if the set was removed
+ */
 sharedData.removeSet = function(name) {
   return __jvertx.sharedData().removeSet(name);
 }
