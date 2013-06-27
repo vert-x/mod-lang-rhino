@@ -62,7 +62,7 @@ sockJS.createSockJSServer = function(httpServer) {
   if (typeof httpServer._to_java_server !== 'function') {
     throw "Please construct a vertx.SockJSServer with an instance of vert.HttpServer"
   }
-  return new sockJS.SockJSServer();
+  return new sockJS.SockJSServer(httpServer);
 }
 
 /**
@@ -78,7 +78,7 @@ sockJS.createSockJSServer = function(httpServer) {
  *
  * @constructor
  */
-sockJS.SockJSServer = function() {
+sockJS.SockJSServer = function(httpServer) {
   var that    = this;
   var vertx   = __jvertx;
   var jserver = vertx.createSockJSServer(httpServer._to_java_server());
