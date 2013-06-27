@@ -1,123 +1,138 @@
-
-function sslSupport(jsObj, jObj) {
+sslSupport = function(jsObj, jObj) {
   /**
-   * Set or get whether the server or client will use SSL.
+   * SSL support functions for network objects. Do not use this object directly.
+   * These functions are mixed into the network objects for you.
    *
-   * @param ssl If true then ssl will be used.
-   * @returns {*}
+   * @see module:vertx/net.NetServer
+   * @see module:vertx/net.NetClient
+   * @see module:vertx/http.HttpServer
+   * @see module:vertx/http.HttpClient
+   * @mixin
    */
-  jsObj.ssl = function(ssl) {
-    if (ssl === undefined) {
-      return jObj.isSSL();
-    } else {
-      jObj.setSSL(ssl);
-      return jsObj;
-    }
-  };
+  SSLSupport = {
+    /**
+     * Get or set the current SSL support for this object.
+     * @param {boolean} [ssl] If provided, sets whether this object supports SSL
+     * @return {boolean|{}} the current status, or <code>this</code>.
+     */
+    ssl: function(ssl) {
+      if (ssl === undefined) {
+        return jObj.isSSL();
+      } else {
+        jObj.setSSL(ssl);
+        return jsObj;
+      }
+    },
 
-  /**
-   * Set org get the path to the SSL key store. This method should only be used with the client/server in SSL mode, i.e. after {#ssl=}
-   * has been set to true.
-   * The SSL key store is a standard Java Key Store, and should contain the client/server certificate. For a client, it's only necessary to supply
-   * a client key store if the server requires client authentication via client certificates.
-   *
-   * @param path: The path to the key store
-   * @returns {*}
-   */
-  jsObj.keyStorePath = function(path) {
-    if (path === undefined) {
-      return jObj.getKeyStorePath();
-    } else {
-      jObj.setKeyStorePath(path);
-      return jsObj;
-    }
-  };
+    /**
+     * Get or set the current keystore path for this object.
+     * @param {string} [path] If provided, sets the keystore path
+     * @return {boolean|{}} the current path, or <code>this</code>.
+     */
+    keyStorePath: function(path) {
+      if (path === undefined) {
+        return jObj.getKeyStorePath();
+      } else {
+        jObj.setKeyStorePath(path);
+        return jsObj;
+      }
+    },
 
-  /**
-   * Set org get the password for the SSL key store. This method should only be used with the client in SSL mode, i.e. after ssl
-   * has been set to true.
-   *
-   * @param password The password
-   * @returns {*}
-   */
-  jsObj.keyStorePassword = function(password) {
-    if (password === undefined) {
-      return jObj.getKeyStorePassword();
-    } else {
-      jObj.setKeyStorePassword(password);
-      return jsObj;
-    }
-  };
+    /**
+     * Get or set the current keystore password for this object.
+     * @param {string} [password] If provided, sets the keystore password
+     * @return {boolean|{}} the current password, or <code>this</code>.
+     */
+    keyStorePassword: function(password) {
+      if (password === undefined) {
+        return jObj.getKeyStorePassword();
+      } else {
+        jObj.setKeyStorePassword(password);
+        return jsObj;
+      }
+    },
 
-  /**
-   * Set or get the path to the SSL trust store. This method should only be used with the client/server in SSL mode, i.e. after {#ssl=}
-   * has been set to true.
-   * The SSL trust store is a standard Java Key Store, and should contain the certificate(s) of the clients/servers that the server/client trusts. The SSL
-   * handshake will fail if the server provides a certificate that the client does not trust, or if client authentication is used,
-   * if the client provides a certificate the server does not trust.
-   *
-   * @param path The path to the trust store
-   * @returns {*}
-   */
-  jsObj.trustStorePath = function(path) {
-    if (path === undefined) {
-      return jObj.getTrustStorePath();
-    } else {
-      jObj.setTrustStorePath(path);
-      return jsObj;
-    }
-  };
+    /**
+     * Get or set the current trust store path for this object.
+     * @param {string} [path] If provided, sets the trust store path
+     * @return {boolean|{}} the current path, or <code>this</code>.
+     */
+    trustStorePath: function(path) {
+      if (path === undefined) {
+        return jObj.getTrustStorePath();
+      } else {
+        jObj.setTrustStorePath(path);
+        return jsObj;
+      }
+    },
 
-  /**
-   * Set or get the password for the SSL trust store. This method should only be used in set mode when the client is in SSL mode.
-   *
-   * @param password: The password.
-   * @returns {*}
-   */
-  jsObj.trustStorePassword = function(password) {
-    if (password === undefined) {
-      return jObj.getTrustStorePassword();
-    } else {
-      jObj.setTrustStorePassword(password);
-      return jsObj;
+    /**
+     * Get or set the current trust store password for this object.
+     * @param {string} [password] If provided, sets the trust store password
+     * @return {boolean|{}} the current password, or <code>this</code>.
+     */
+    trustStorePassword: function(password) {
+      if (password === undefined) {
+        return jObj.getTrustStorePassword();
+      } else {
+        jObj.setTrustStorePassword(password);
+        return jsObj;
+      }
     }
-  };
+  }
+  jsObj.ssl                = SSLSupport.ssl;
+  jsObj.keyStorePath       = SSLSupport.keyStorePath;
+  jsObj.keyStorePassword   = SSLSupport.keyStorePassword;
+  jsObj.trustStorePath     = SSLSupport.trustStorePath;
+  jsObj.trustStorePassword = SSLSupport.trustStorePassword;
 }
 
-function serverSslSupport(jsObj, jObj) {
+serverSslSupport = function(jsObj, jObj) {
   /**
-   * Client authentication is an extra level of security in SSL, and requires clients to provide client certificates.
-   * Those certificates must be added to the server trust store.
-   *
-   * @param {*}: If true then the server will request client authentication from any connecting clients, if they
-   * do not authenticate then they will not make a connection.
-   * @returns {*}
+   * Provides functions for server-side SSL support. Do not use this object directly.
+   * @see module:vertx/net.NetServer
+   * @see module:vertx/http.HttpServer
+   * @mixin
    */
-  jsObj.clientAuthRequired = function(required) {
-    if (required === undefined) {
-      return jObj.isClientAuthRequired();
-    } else {
-      jObj.setClientAuthRequired(required);
-      return jsObj;
+  ServerSSLSupport = {
+    /**
+     * Get or set whether client authorization is required
+     * @param {boolean} [required] If provided, sets whether client authorization is required
+     * @return {boolean|{{}}} the current status, or <code>this</code>
+     */
+    clientAuthRequired: function(required) {
+      if (required === undefined) {
+        return jObj.isClientAuthRequired();
+      } else {
+        jObj.setClientAuthRequired(required);
+        return jsObj;
+      }
     }
-  };
+  }
+  jsObj.clientAuthRequired = ServerSSLSupport.clientAuthRequired;
 }
 
-function clientSslSupport(jsObj, jObj) {
+clientSslSupport = function(jsObj, jObj) {
   /**
-   * Should the client trust ALL server certificates?
-   *
-   * @param all: all val is set to true then the client will trust ALL server certificates and will not attempt to authenticate them
-   * against it's local client trust store. The default value is false.
-   * Use this method with caution!
-   * @returns {*}
+   * Provides functions for server-side SSL support. Do not use this object directly.
+   * @see module:vertx/net.NetClient
+   * @see module:vertx/http.HttpClient
+   * @mixin
    */
-  jsObj.trustAll = function(all) {
-    if (all === undefined) {
-      return jObj.isTrustAll();
-    } else {
-      jObj.setTrustAll(all);
-      return jsObj;
+  ClientSSLSupport = {
+    /**
+     * Get or set the trustAll SSL attribute
+     * @param {boolean} [all] If provided, sets the trustAll attribute
+     * @return {boolean|{{}}} the current trustAll status, or <code>this</code>
+     */
+    trustAll: function(all) {
+      if (all === undefined) {
+        return jObj.isTrustAll();
+      } else {
+        jObj.setTrustAll(all);
+        return jsObj;
+      }
     }
-  };
+  }
+  jsObj.trustAll = ClientSSLSupport.trustAll;
 }

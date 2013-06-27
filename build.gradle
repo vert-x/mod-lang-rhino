@@ -32,6 +32,15 @@ targetCompatibility = '1.7'
 jar.enabled = false
 assert configurations.archives.artifacts.removeAll { it.file == jar.archivePath }
 
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.eriwen:gradle-js-plugin:1.5.1'
+  }
+}
+
 configurations {
   provided
   testCompile.extendsFrom provided
@@ -144,6 +153,13 @@ task collectDeps(type: Copy) {
   into("test") {
     from configurations.testCompile
   }
+}
+
+task jsdoc(type: Exec) {
+  ignoreExitValue false
+  workingDir = project.projectDir
+
+  commandLine "./jsdoc-master/jsdoc -r -d $projectDir/build/docs $projectDir/src/main/api_shim"
 }
 
 // Map the 'provided' dependency configuration to the appropriate IDEA visibility scopes.

@@ -15,7 +15,53 @@
  */
 
 if (typeof __vertxload === 'string') {
-  throw "Use require() to load the Vert.x API"
+  throw "Use require() to load Vert.x API modules"
 }
 
-module.exports = org.vertx.java.core.buffer.Buffer;
+/**
+ * @see https://github.com/vert-x/vert.x/blob/master/vertx-core/src/main/java/org/vertx/java/core/buffer/Buffer.java
+ * @external org.vertx.java.core.buffer.Buffer
+ */
+
+/**
+ * Most data in vert.x is shuffled around using buffers.
+ *
+ * A Buffer represents a sequence of zero or more bytes that can be written to
+ * or read from, and which expands automatically as necessary to accomodate any
+ * bytes written to it. You can perhaps think of a buffer as smart byte array.
+ *
+ * Buffers are actually Java objects - the exact same as those documented in the
+ * vert.x Java documents. The methods documented for the Java Buffer objects
+ * are applicable to Javascript Buffer instances as well. 
+ *
+ * @see https://github.com/vert-x/vert.x/blob/master/vertx-core/src/main/java/org/vertx/java/core/buffer/Buffer.java
+ *
+ * @example
+ * var Buffer = require('vertx/buffer');
+ * var buff   = new Buffer('Hello!'); // this is actually a java thing
+ *
+ * @example <caption>Creating Buffers</caption>
+ * var Buffer = require('vertx/buffer');
+ *
+ * // Create a buffer from a string with UTF-8 encoding (the default)
+ * var buff = new Buffer('Now is the winter of our discontent made glorioius summer');
+ *
+ * // Create a buffer from a string and specify an encoding
+ * buff = new Buffer('Too hot, too hot!', 'UTF-16');
+ *
+ * Please see the API manual for more examples
+ *
+ * @constructor
+ */
+var Buffer = org.vertx.java.core.buffer.Buffer;
+
+
+/**
+ * The Javascript API exposes Java <code>org.vertx.java.core.buffer.Buffer</code> 
+ * instances directly to Javascript.  See the Java documentation for
+ * information on the public API.
+ *
+ * @see https://github.com/vert-x/vert.x/blob/master/vertx-core/src/main/java/org/vertx/java/core/buffer/Buffer.java
+ * @module vertx/buffer
+ */
+module.exports = Buffer;
