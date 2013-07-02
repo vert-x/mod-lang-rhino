@@ -176,16 +176,16 @@ function testFormFileUpload() {
   server.requestHandler(function(req) {
     if (req.uri() === '/form') {
       req.response.chunked(true);
-      req.uploadHandler(function(event) {
-        event.dataHandler(function(buffer) {
+      req.uploadHandler(function(upload) {
+        tu.azzert(upload.filename() === "tmp-0.txt")
+        tu.azzert(upload.contentType() === "image/gif")
+        upload.dataHandler(function(buffer) {
           tu.azzert(content == buffer.toString());
         });
       });
       req.endHandler(function() {
         var attrs = req.formAttributes();
-        tu.azzert(attrs.get('name') === "file");
-        tu.azzert(attrs.get('filename') === "tmp-0.txt");
-        tu.azzert(attrs.get('Content-Type') === "image/gif");
+        tu.azzert(attrs.isEmpty());
         req.response.end();
       });
     }
