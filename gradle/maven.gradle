@@ -86,7 +86,7 @@ def configurePom(def pom) {
     name rootProject.name
 		description 'Vert.x module that provides JavaScript support using Rhino'
 		inceptionYear '2013'
-    packaging 'pom'
+    packaging 'jar'
 		url 'http://vertx.io'
 		
 		developers {
