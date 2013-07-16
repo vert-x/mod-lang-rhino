@@ -185,7 +185,7 @@ function testRequestTimeout() {
       // expected on timeout
       tu.testComplete();
     });
-    tu.azzert(req === req.timeout(100));
+    tu.azzert(req === req.timeout(1));
     req.end();
   });
 }
