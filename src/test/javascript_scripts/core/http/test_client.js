@@ -171,6 +171,25 @@ function testPATCHSSLChunked() {
   httpMethod(true, "PATCH", true)
 }
 
+function testRequestTimeout() {
+  server.requestHandler(function(req) {
+    req.pause();
+    req.response.end("OK");
+  });
+  server.listen(8080, "0.0.0.0", function(err, serv) {
+    tu.azzert(err === null);
+    client.port(8080);
+    var req = client.get("/foo", function(resp) {
+    });
+    req.exceptionHandler(function(e) {
+      // expected on timeout
+      tu.testComplete();
+    });
+    tu.azzert(req === req.timeout(100));
+    req.end();
+  });
+}
+
 function testFormFileUpload() {
   var content = "Vert.x rocks!";
   server.requestHandler(function(req) {
