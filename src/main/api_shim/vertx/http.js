@@ -1265,9 +1265,11 @@ http.HttpClientRequest = function(jreq) {
    * has the effect of canceling any existing timeout and starting the timeout from scratch.
    *
    * @param {number} timeout The amount of time in milliseconds to wait before timing out
+   * @returns {module:vertx/http.HttpClientRequest}
    */
   this.timeout = function(t) {
     jreq.setTimeout(t);
+    return that;
   }
 }
 
