@@ -175,6 +175,7 @@ function testFormFileUpload() {
   var content = "Vert.x rocks!";
   server.requestHandler(function(req) {
     if (req.uri() === '/form') {
+      req.expectMultiPart(true);
       req.response.chunked(true);
       req.uploadHandler(function(upload) {
         tu.azzert(upload.filename() === "tmp-0.txt")
@@ -225,6 +226,7 @@ function testFormUploadAttributes() {
 
         if (req.uri() === '/form') {
             req.response.chunked(true);
+            req.expectMultiPart(true);
             req.uploadHandler(function(event) {
                 event.dataHandler(function(buffer) {
                     tu.azzert(false);
