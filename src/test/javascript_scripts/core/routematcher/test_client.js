@@ -27,7 +27,6 @@ var params = { "name" : "foo", "version" : "v0.1"};
 var re_params = { "param0" : "foo", "param1" :"v0.1"};
 var regex = "\\/([^\\/]+)\\/([^\\/]+)";
 
-
 function testGetWithPattern() {
   route('get', false, "/:name/:version", params, "/foo/v0.1")
 }

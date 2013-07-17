@@ -227,6 +227,7 @@ http.HttpServerRequest = function(jreq) {
    */
   this.expectMultiPart = function(expect) {
     jreq.expectMultiPart(expect);
+    return that;
   }
 
   /**
