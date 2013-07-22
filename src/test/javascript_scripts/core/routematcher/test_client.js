@@ -173,7 +173,5 @@ tu.appReady();
 function vertxStop() {
   tu.unregisterAll();
   tu.appStopped();
-  server.close(function() {
-    client.close();
-  })
+  server.close();
 }
