@@ -34,6 +34,8 @@ var reply = {
   status: 123
 }
 
+var NoopHandler = function(msg, replier) { }
+
 function assertSent(msg) {
   tu.azzert(sent.price === msg.price);
   tu.azzert(sent.name === msg.name);
@@ -43,6 +45,22 @@ function assertSent(msg) {
 function assertReply(rep) {
   tu.azzert(reply.desc === rep.desc);
   tu.azzert(reply.status === rep.status);
+}
+
+function testRegistrationHandler() {
+  eb.registerHandler(address, NoopHandler, function() {
+    tu.checkThread();
+    eb.unregisterHandler(address, NoopHandler);
+    tu.testComplete();
+  });
+}
+
+function testUnregistrationHandler() {
+  eb.registerHandler(address, NoopHandler);
+  eb.unregisterHandler(address, NoopHandler, function() {
+    tu.checkThread();
+    tu.testComplete();
+  });
 }
 
 function testSimple() {
