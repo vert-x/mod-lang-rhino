@@ -79,7 +79,7 @@ sourceSets {
 task copyMod( type:Copy, dependsOn: 'classes' ) {
   into "build/mod/$modowner~$modname~$version"
   from compileJava
-  from 'src/main/conf'
+  from 'src/main/resources'
   from 'src/main/api_shim'
   from 'src/main/coffeescript'
   into( 'lib' ) {
@@ -165,13 +165,6 @@ task collectDeps(type: Copy) {
   into("test") {
     from configurations.testCompile
   }
-}
-
-task jsdoc(type: Exec) {
-  ignoreExitValue false
-  workingDir = project.projectDir
-
-  commandLine "./jsdoc-master/jsdoc -r -d $projectDir/build/docs $projectDir/src/main/api_shim"
 }
 
 // Map the 'provided' dependency configuration to the appropriate IDEA visibility scopes.
