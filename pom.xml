@@ -40,6 +40,7 @@
     <maven.surefire.report.plugin.version>2.14</maven.surefire.report.plugin.version>
     <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
     <maven.dependency.plugin.version>2.7</maven.dependency.plugin.version>
+    <version.apacheds.dns>1.5.7</version.apacheds.dns>
   </properties>
 
   <dependencies>
@@ -82,6 +83,12 @@
       <version>${vertx.lang-js.version}</version> 
       <scope>test</scope> 
     </dependency> 
+    <dependency>
+      <groupId>org.apache.directory.server</groupId>
+      <artifactId>apacheds-protocol-dns</artifactId>
+      <version>${version.apacheds.dns}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.mozilla</groupId>
