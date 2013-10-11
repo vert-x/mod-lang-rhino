@@ -24,7 +24,7 @@
 
     <!--Dependency versions-->
     <vertx.version>2.0.3-SNAPSHOT</vertx.version>
-    <vertx.testtools.version>2.0.2-SNAPSHOT</vertx.testtools.version>
+    <vertx.testtools.version>2.0.3-SNAPSHOT</vertx.testtools.version>
     <vertx.testframework.version>2.0.0-SNAPSHOT</vertx.testframework.version>
     <vertx.lang-js.version>1.0.0-SNAPSHOT</vertx.lang-js.version>
     <rhino.version>1.7R4</rhino.version>
