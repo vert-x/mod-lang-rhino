@@ -24,9 +24,9 @@
 
     <!--Dependency versions-->
     <vertx.version>2.1M1</vertx.version>
-    <vertx.testtools.version>2.0.3-SNAPSHOT</vertx.testtools.version>
-    <vertx.testframework.version>2.0.0-SNAPSHOT</vertx.testframework.version>
-    <vertx.lang-js.version>1.0.0-SNAPSHOT</vertx.lang-js.version>
+    <vertx.testtools.version>2.0.2-final</vertx.testtools.version>
+    <vertx.testframework.version>2.0.0-final</vertx.testframework.version>
+    <vertx.lang-js.version>1.0.0-Beta1</vertx.lang-js.version>
     <rhino.version>1.7R4</rhino.version>
     <junit.version>4.11</junit.version>
 
@@ -34,7 +34,6 @@
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
     <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
     <maven.clean.plugin.version>2.5</maven.clean.plugin.version>
-    <maven.vertx.plugin.version>2.0.0-SNAPSHOT</maven.vertx.plugin.version>
     <maven.surefire.plugin.version>2.14</maven.surefire.plugin.version>
     <maven.failsafe.plugin.version>2.14</maven.failsafe.plugin.version>
     <maven.surefire.report.plugin.version>2.14</maven.surefire.report.plugin.version>
