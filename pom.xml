@@ -28,9 +28,9 @@
     <module.name>${project.groupId}~${project.artifactId}~${project.version}</module.name>
 
     <!--Dependency versions-->
-    <vertx.version>2.1M3</vertx.version>
+    <vertx.version>2.1RC1</vertx.version>
     <vertx.testtools.version>2.0.3-final</vertx.testtools.version>
-    <vertx.lang-js.version>1.0.0-Beta2</vertx.lang-js.version>
+    <vertx.lang-js.version>1.0.0-RC1</vertx.lang-js.version>
     <rhino.version>1.7R4</rhino.version>
     <junit.version>4.11</junit.version>
 
