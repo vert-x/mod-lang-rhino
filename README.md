@@ -1,8 +1,10 @@
-# Rhino Vert.x API Module
+# Vert.x 2.x is **deprecated** - use instead https://github.com/vert-x3/vertx-lang-js
+
+## Rhino Vert.x API Module
 
 [Build Status](https://vertx.ci.cloudbees.com/view/Javascript/job/vert.x-mod-lang-rhino/)
 
-# Javascript on Vert.x with Rhino
+## Javascript on Vert.x with Rhino
 
 Use Rhino as your language module in Vert.x.  This language module uses the
 vert.x Javascript API in [mod-lang-js](https://github.com/vert-x/mod-lang-js)
@@ -13,7 +15,7 @@ Latest Release [API Documentation](http://vertx.io/mod-lang-js/docs/1.0.0/index.
 
 HEAD [API Documentation](https://vertx.ci.cloudbees.com/view/Javascript/job/vert.x-mod-lang-js/lastSuccessfulBuild/artifact/target/docs/index.html)
 
-## Usage
+### Usage
 
 This language module is the default JS runtime in Vert.x and will be loaded on
 demand for all Javascript applications that do not specify a different Javascript
